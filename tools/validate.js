@@ -1070,6 +1070,96 @@ fumaca('inimigos atacando o grupo parado (60 s)', function () {
   J.recriarMundo('trilha', { x: 8, y: 12 });
   rodar(3600, function (k) { if (k % 50 === 0) { I.toqueSegura('ataque', true); } if (k % 50 === 5) I.toqueSegura('ataque', false); });
 });
+fumaca('v1.0: TODO MAPA com o grupo andando e brigando', function () {
+  Object.keys(BSI.data.maps).forEach(function (id) {
+    for (var w = 0; w < 300 && J.trocando; w++) rodar(1);
+    BSI.state.medidores.raiva = 0;
+    J.recriarMundo(id, BSI.data.maps[id].inicio); rodar(20); avancarHistoria(400);
+    var M = J.mundo; if (!M) throw new Error('mapa ' + id + ' não carregou');
+    M.herois.forEach(function (h) { h.vida = 6; h.caido = false; });
+    rodar(400, function (k) {
+      if (k % 60 === 0) I.toqueStick(Math.cos(k * 0.7), Math.sin(k * 0.9));
+      if (k % 25 === 0) I.toqueSegura('ataque', true); if (k % 25 === 2) I.toqueSegura('ataque', false);
+      if (k % 50 === 0) M.herois.forEach(function (h) { if (h.vida < 3) h.vida = 6; });
+      if (BSI.dialogo.ativo || J.modal) avancarHistoria(300);
+    });
+    I.toqueStick(0, 0);
+  });
+});
+fumaca('v1.0: MEMÓRIA — 4 minutos de briga sem acumular lixo', function () {
+  for (var w0 = 0; w0 < 300 && J.trocando; w0++) rodar(1);
+  BSI.state.medidores.raiva = 0; J.recriarMundo('serra', { x: 24.5, y: 40 }); rodar(20); avancarHistoria(400);
+  var M = J.mundo, L = M.lider();
+  for (var i = 0; i < 6; i++) M.inimigos.push(new BSI.Inimigo(['jagunco', 'capangaEspingarda', 'cachorroBravo'][i % 3], L.x + 50 + i * 8, L.y + (i % 2) * 20));
+  var pico = {};
+  rodar(14400, function (k) {
+    M = J.mundo;
+    if (k % 30 === 0) I.toqueSegura('ataque', true); if (k % 30 === 2) I.toqueSegura('ataque', false);
+    if (k % 120 === 0) { M.herois.forEach(function (h) { h.vida = 6; }); if (M.inimigos.filter(function (e) { return !e.morto; }).length < 3) M.inimigos.push(new BSI.Inimigo('jagunco', M.lider().x + 60, M.lider().y)); }
+    if (BSI.dialogo.ativo || J.modal) avancarHistoria(300);
+    if (k % 600 === 0) ['projeteis', 'baloes', 'efeitos', 'agenda', 'props', 'inimigos'].forEach(function (c) { pico[c] = Math.max(pico[c] || 0, (M[c] || []).length); });
+  });
+  if (M.particulas.lista.length > 600) throw new Error('partículas acumulando: ' + M.particulas.lista.length);
+  if (pico.projeteis > 250) throw new Error('projéteis acumulando: ' + pico.projeteis);
+  if (pico.baloes > 30) throw new Error('balões acumulando: ' + pico.baloes);
+  if (pico.agenda > 200) throw new Error('agenda acumulando: ' + pico.agenda);
+  if (pico.efeitos > 150) throw new Error('efeitos acumulando: ' + pico.efeitos);
+  if (M.trilha.length > 170) throw new Error('rastro do líder acumulando: ' + M.trilha.length);
+});
+fumaca('v1.0: OS 7 FINAIS tocados até os créditos', function () {
+  var receitas = {
+    sobrenatural: function (S) { S.medidores.raiva = 95; },
+    traicao: function (S) { S.medidores.desconfianca = 95; },
+    absurdo: function (S) { S.steloFalsas = 2; },
+    tragico: function (S) { S.medidores.juizo = 10; },
+    heroico: function (S) { ['botija_recuperada', 'grande_fogueira'].forEach(function (f) { S.flags[f] = true; }); },
+    familia: function (S) { ['irmaos_unidos', 'tia_zane_respeitada'].forEach(function (f) { S.flags[f] = true; }); },
+    meio: function () { }
+  };
+  var vistos = [];
+  Object.keys(receitas).forEach(function (id) {
+    if (!BSI.data.finais.some(function (f) { return f.id === id; })) throw new Error('final ' + id + ' não existe');
+    var S = BSI.state;
+    S.medidores.raiva = 0; S.medidores.desconfianca = 0; S.medidores.juizo = 100; S.steloFalsas = 0; S.stats.queimados = 0;
+    ['botija_recuperada', 'grande_fogueira', 'irmaos_unidos', 'tia_zane_respeitada', 'daniel_descontrolado'].forEach(function (f) { S.flags[f] = false; });
+    receitas[id](S);
+    J.recriarMundo('praca_festa', { x: 10, y: 17 }); rodar(10);
+    BSI.finais.tocar(J.mundo);
+    var creditos = false;
+    for (var k = 0; k < 3000 && !creditos; k++) {
+      if (J.modal && J.modal.constructor && J.modal.constructor.name === 'Creditos') creditos = true;
+      else if (BSI.dialogo.ativo) { if (k % 2) { I.toqueTela(10, 10); rodar(2); } else segurar('confirmar', 1); }
+      else if (J.modal && J.modal.terminar && !J.modal.fim) { J.modal.terminar(true); rodar(2); }
+      else rodar(2);
+      if (J.modal && /Creditos|Estatisticas/.test(J.modal.constructor && J.modal.constructor.name)) creditos = true;
+    }
+    if (S.final !== id) throw new Error('queria o final ' + id + ' e veio ' + S.final);
+    if (!creditos) throw new Error('o final ' + id + ' não chegou nos créditos');
+    vistos.push(id);
+    if (J.modal) J.fecharModal();
+  });
+  BSI.state.medidores.raiva = 0; BSI.state.medidores.desconfianca = 0; BSI.state.medidores.juizo = 100; BSI.state.steloFalsas = 0;
+});
+fumaca('v1.0: 3 ESPAÇOS DE SAVE, save corrompido, exportar/importar', function () {
+  var SV = BSI.save, ls = { setItem: function (k, v) { armazenamento[k] = v; } };
+  SV.usarSlot(2); J.salvar();
+  var i2 = SV.info(2); if (!i2.meta || !i2.meta.ato) throw new Error('o espaço 2 não guardou nome/ato');
+  J.salvar(); // segunda vez: guarda o anterior
+  ls.setItem('bsi.save.slot2', '{isso nao e json');
+  var c = SV.info(2); if (!c.corrompido) throw new Error('save estragado devia aparecer como corrompido');
+  if (!c.temAnterior) throw new Error('devia ter o save anterior pra voltar');
+  if (SV.carregarJogo(2) !== null) throw new Error('save corrompido não devia carregar');
+  if (!SV.carregarAnterior(2)) throw new Error('o save anterior não carregou');
+  // exporta do 1 (o atual) e importa no 3
+  SV.usarSlot(1); J.salvar();
+  var arq = SV.exportar(1); if (!arq) throw new Error('não exportou');
+  var erro = SV.importar(3, arq); if (erro) throw new Error('não importou: ' + erro);
+  if (!SV.info(3).meta) throw new Error('o espaço 3 ficou vazio depois de importar');
+  if (!SV.importar(3, 'lixo')) throw new Error('importar lixo devia dar erro');
+  // a tela abre e fecha
+  J.abrirModal(new BSI.TelaSaves('gerenciar')); rodar(10); segurar('pausa', 1); rodar(3);
+  SV.apagarJogo(2); SV.apagarJogo(3); SV.usarSlot(1);
+});
 fumaca('pausa, salvar e continuar', function () {
   J.abrirModal(J.pausa()); rodar(10); J.fecharModal();
   J.salvar();

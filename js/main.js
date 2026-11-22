@@ -31,10 +31,13 @@
     criarMenuTitulo: function () {
       J.cena = 'titulo';
       J.menuTitulo = new BSI.Menu([
-        { txt: 'Continuar', ativo: function () { return BSI.save.temJogo(); }, acao: J.continuar },
-        { txt: 'Novo jogo', acao: function () { var ir = function () { J.abrirModal(J.escolherDificuldade()); }; if (BSI.save.temJogo()) J.abrirModal(J.confirmacao('Já tem um jogo salvo. Começar do zero?', ir)); else ir(); } },
+        { txt: 'Continuar', ativo: function () { return BSI.save.temJogo(); }, acao: function () { J.abrirModal(new BSI.TelaSaves('carregar')); } },
+        { txt: 'Novo jogo', acao: function () { J.abrirModal(new BSI.TelaSaves('novo')); } },
+        { txt: 'Jogos salvos', acao: function () { J.abrirModal(new BSI.TelaSaves('gerenciar')); } },
+        { txt: 'Conquistas e finais', acao: function () { if (BSI.Galeria2) J.abrirModal(new BSI.Galeria2()); } },
+        { txt: 'Créditos', acao: function () { J.abrirModal(new BSI.Creditos(null, true)); } },
         { txt: 'Opções', acao: function () { BSI.opcoes.abrir(null); } }
-      ], { y: function () { return Math.round(BSI.view.h * 0.55); }, larg: 140, alt: 15 });
+      ], { y: function () { return Math.round(BSI.view.h * 0.5); }, larg: 140, alt: Math.min(15, Math.floor(BSI.view.h * 0.45 / 6)) });
     },
 
     // dificuldade do jogo novo
@@ -117,12 +120,15 @@
     // ---------------- partida ----------------
     novoJogo: function () {
       BSI.story.novoJogo();
+      if (J.proximoNome) { BSI.state._nomeNovo = J.proximoNome; J.proximoNome = null; }
       BSI.hud.limpar();
       BSI.fases.iniciar(BSI.data.ordemFases[0]);
     },
-    continuar: function () {
-      var s = BSI.save.carregarJogo();
-      if (!s) return;
+    continuar: function (slot, anterior) {
+      if (slot) BSI.save.usarSlot(slot);
+      var s = anterior ? BSI.save.carregarAnterior(BSI.save.slotAtual()) : BSI.save.carregarJogo();
+      if (!s) { BSI.hud.aviso('Esse save não pôde ser carregado.', '#ff9a7a'); return; }
+      s = U.clonar(s); delete s._meta;
       J.fadeOut(function () {
         BSI.story.carregar(s);
         BSI.hud.limpar();
