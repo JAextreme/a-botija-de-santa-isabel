@@ -1,0 +1,5 @@
+# cópias de segurança (zip) e o pacote de lançamento ficam fora do git
+backups/
+dist/
+_tmp/
+.claude/settings.local.json

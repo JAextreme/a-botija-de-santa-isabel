@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#120c1c">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>A Botija de Santa Isabel</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Área do jogo: canvas de pixel (baixa resolução) + canvas de texto (resolução da tela) -->
+  <div id="palco">
+    <canvas id="tela"></canvas>
+    <canvas id="tela-texto"></canvas>
+  </div>
+
+  <!-- Controles de toque (criados pelo js/ui/touch.js) -->
+  <div id="toque"></div>
+
+  <!-- Painel de debug (criado pelo js/core/debug.js) -->
+  <div id="debug-painel" class="escondido"></div>
+
+  <!--
+    ORDEM DOS SCRIPTS IMPORTA: não usamos import/export para o jogo abrir
+    com dois cliques (file://). Cada arquivo pendura suas coisas em window.BSI.
+    O tools/validate.js confere esta lista.
+  -->
+  <!-- núcleo -->
+  <script src="js/core/namespace.js"></script>
+  <!-- números ajustáveis (luz, minimapa, grupo...) -->
+  <script src="js/config/visual.js"></script>
+  <script src="js/config/balance.js"></script>
+  <script src="js/config/weapons.js"></script>
+  <!-- imagens CC0 embutidas (Kenney) e o carregador -->
+  <script src="js/data/imagens_kenney.js"></script>
+  <script src="js/core/imagens.js"></script>
+  <script src="js/core/rng.js"></script>
+  <script src="js/core/save.js"></script>
+  <script src="js/core/audio.js"></script>
+  <script src="js/core/input.js"></script>
+  <script src="js/core/view.js"></script>
+  <script src="js/core/camera.js"></script>
+  <script src="js/core/collision.js"></script>
+  <script src="js/core/loop.js"></script>
+  <!-- desenho -->
+  <script src="js/render/palette.js"></script>
+  <script src="js/render/painter.js"></script>
+  <script src="js/render/spritecache.js"></script>
+  <script src="js/render/boneco.js"></script>
+  <script src="js/render/armas_arte.js"></script>
+  <script src="js/render/retratos.js"></script>
+  <script src="js/render/tiles.js"></script>
+  <script src="js/render/tiles_extra.js"></script>
+  <script src="js/render/tiles_hd.js"></script>
+  <script src="js/render/particles.js"></script>
+  <script src="js/render/lighting.js"></script>
+  <script src="js/render/efeitos.js"></script>
+  <script src="js/render/text.js"></script>
+  <!-- mundo -->
+  <script src="js/world/tilemap.js"></script>
+  <script src="js/world/firegrid.js"></script>
+  <script src="js/world/maps/terreiro.js"></script>
+  <script src="js/world/maps/trilha.js"></script>
+  <script src="js/world/maps/serra.js"></script>
+  <script src="js/world/maps/grota.js"></script>
+  <script src="js/world/maps/terras_paulo.js"></script>
+  <script src="js/world/maps/campo_roma.js"></script>
+  <script src="js/world/maps/acudinho.js"></script>
+  <script src="js/world/maps/santa_isabel.js"></script>
+  <script src="js/world/maps/bar_stelo.js"></script>
+  <script src="js/world/maps/caminho_tapera.js"></script>
+  <script src="js/world/maps/tapera.js"></script>
+  <script src="js/world/maps/praca_festa.js"></script>
+  <script src="js/world/decoracao.js"></script>
+  <script src="js/world/vida.js"></script>
+  <!-- entidades -->
+  <script src="js/entities/characters.js"></script>
+  <script src="js/entities/entity.js"></script>
+  <script src="js/entities/projectiles.js"></script>
+  <script src="js/entities/hero.js"></script>
+  <script src="js/entities/companion_ai.js"></script>
+  <script src="js/entities/grupo.js"></script>
+  <script src="js/entities/abilities.js"></script>
+  <script src="js/entities/armas.js"></script>
+  <script src="js/entities/impacto.js"></script>
+  <script src="js/entities/combos.js"></script>
+  <script src="js/entities/excesso.js"></script>
+  <script src="js/entities/enemies.js"></script>
+  <script src="js/entities/inimigos_novos.js"></script>
+  <script src="js/entities/animals.js"></script>
+  <script src="js/entities/props.js"></script>
+  <script src="js/entities/dogs.js"></script>
+  <script src="js/world/caipora.js"></script>
+  <script src="js/entities/grouppowers.js"></script>
+  <script src="js/entities/bosses/paulo.js"></script>
+  <script src="js/entities/bosses/alma.js"></script>
+  <script src="js/entities/bosses/gojoba.js"></script>
+  <script src="js/entities/bosses/gadernal.js"></script>
+  <script src="js/entities/bosses/cds.js"></script>
+  <script src="js/entities/tiazane.js"></script>
+  <!-- história (motor) -->
+  <script src="js/story/state.js"></script>
+  <script src="js/story/dialog_runner.js"></script>
+  <script src="js/story/fases.js"></script>
+  <script src="js/story/finais.js"></script>
+  <script src="js/story/falas_vivas.js"></script>
+  <!-- história (conteúdo) -->
+  <script src="js/story/data/falas.js"></script>
+  <script src="js/story/data/falas_combate.js"></script>
+  <script src="js/story/data/listas.js"></script>
+  <script src="js/story/data/estrada.js"></script>
+  <script src="js/story/data/reacoes.js"></script>
+  <script src="js/story/data/falas_chefe.js"></script>
+  <script src="js/story/data/pistas.js"></script>
+  <script src="js/story/data/fases.js"></script>
+  <script src="js/story/data/dialogos_proto.js"></script>
+  <script src="js/story/data/dialogos_ato1.js"></script>
+  <script src="js/story/data/eventos_ato1.js"></script>
+  <script src="js/story/data/dialogos_interludio.js"></script>
+  <script src="js/story/data/eventos_interludio.js"></script>
+  <script src="js/story/data/dialogos_ato2.js"></script>
+  <script src="js/story/data/eventos_ato2.js"></script>
+  <script src="js/story/data/dialogos_ato3.js"></script>
+  <script src="js/story/data/eventos_ato3.js"></script>
+  <script src="js/story/data/finais.js"></script>
+  <script src="js/story/data/alvos.js"></script>
+  <!-- mundo (orquestra tudo) -->
+  <script src="js/world/world.js"></script>
+  <!-- interface -->
+  <script src="js/ui/cordel.js"></script>
+  <script src="js/ui/hud.js"></script>
+  <script src="js/ui/minimapa.js"></script>
+  <script src="js/ui/dialogbox.js"></script>
+  <script src="js/ui/menus.js"></script>
+  <script src="js/ui/minigames.js"></script>
+  <script src="js/ui/minigames_boss.js"></script>
+  <script src="js/ui/minigames_interludio.js"></script>
+  <script src="js/ui/minigames_ato2.js"></script>
+  <script src="js/ui/telas_extra.js"></script>
+  <script src="js/ui/opcoes.js"></script>
+  <script src="js/ui/armas_ui.js"></script>
+  <script src="js/ui/mira.js"></script>
+  <script src="js/ui/touch.js"></script>
+  <!-- debug e inicialização -->
+  <script src="js/core/debug.js"></script>
+  <script src="js/core/galeria.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
