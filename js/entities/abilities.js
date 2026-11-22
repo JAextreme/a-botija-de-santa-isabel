@@ -176,6 +176,7 @@
       nome: 'Roubo da Madrugada', cd: 12,
       usar: function (h, mundo) {
         h.st.invisivel = 6;
+        mundo.estatistica('carne'); // a "isca" sempre sai da carne de sol da Tia Zane
         if (mundo.chefe && mundo.chefe.alma && mundo.chefe.livre()) {
           // contra a alma: deixa a carne assada de isca
           mundo.props.push(new BSI.Isca(h.x, h.y));

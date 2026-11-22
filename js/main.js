@@ -34,7 +34,7 @@
         { txt: 'Continuar', ativo: function () { return BSI.save.temJogo(); }, acao: function () { J.abrirModal(new BSI.TelaSaves('carregar')); } },
         { txt: 'Novo jogo', acao: function () { J.abrirModal(new BSI.TelaSaves('novo')); } },
         { txt: 'Jogos salvos', acao: function () { J.abrirModal(new BSI.TelaSaves('gerenciar')); } },
-        { txt: 'Conquistas e finais', acao: function () { if (BSI.Galeria2) J.abrirModal(new BSI.Galeria2()); } },
+        { txt: 'Conquistas e finais', acao: function () { J.abrirModal(new BSI.Galeria2()); } },
         { txt: 'Créditos', acao: function () { J.abrirModal(new BSI.Creditos(null, true)); } },
         { txt: 'Opções', acao: function () { BSI.opcoes.abrir(null); } }
       ], { y: function () { return Math.round(BSI.view.h * 0.5); }, larg: 140, alt: Math.min(15, Math.floor(BSI.view.h * 0.45 / 6)) });
@@ -218,6 +218,7 @@
       var bloqueado = f.alvo === 1;
       // dicas de controle (antes de tudo: vê a tecla antes de a pausa abrir)
       if (BSI.tutorial && J.cena === 'jogo' && J.mundo && !bloqueado) BSI.tutorial.atualizar(dt, J.mundo);
+      if (BSI.conquistas && J.cena === 'jogo' && J.mundo) BSI.conquistas.atualizar(dt);
 
       if (J.cena === 'titulo') {
         J.tTitulo += dt;

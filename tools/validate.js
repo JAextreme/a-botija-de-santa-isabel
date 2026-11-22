@@ -1273,6 +1273,44 @@ fumaca('v1.0: TUTORIAL — dicas aparecem na hora certa e somem quando aprende',
   if (T.atual) throw new Error('dicas desligadas e mesmo assim apareceu uma');
   BSI.save.cfg().dicasLigadas = true; M.inimigos.forEach(function (e) { e.morto = true; });
 });
+fumaca('v1.0: TELAS FINAIS — estatísticas, créditos em cordel, conquistas e galeria', function () {
+  var CQ = BSI.conquistas;
+  if (CQ.lista.length < 20) throw new Error('poucas conquistas: ' + CQ.lista.length);
+  var ids = {}; CQ.lista.forEach(function (a) { if (ids[a.id]) throw new Error('conquista repetida ' + a.id); ids[a.id] = 1; if (!a.nome || !a.desc || !a.teste) throw new Error('conquista incompleta ' + a.id); });
+  // créditos têm o autor e a homenagem
+  var txt = BSI.data.creditos.map(function (c) { return c[0]; }).join(' | ');
+  if (!/José Neto/.test(txt) || !/CRIADO POR/.test(txt)) throw new Error('créditos sem "Criado por José Neto"');
+  if (!/Tio Ota/.test(txt)) throw new Error('créditos sem a homenagem ao Tio Ota');
+  if (!/Rafael CDs/.test(txt)) throw new Error('créditos sem Rafael CDs');
+  // conquista ganha uma vez só e fica salva
+  var c = BSI.save.cfg(); c.conquistas = {};
+  BSI.state.stats.cacas = 1; CQ.checar();
+  if (!CQ.tem('primeira_caca')) throw new Error('não ganhou a conquista da primeira caça');
+  if (CQ.ganhar('primeira_caca')) throw new Error('ganhou a mesma conquista duas vezes');
+  // estatísticas -> créditos -> título
+  J.recriarMundo('praca_festa', { x: 10, y: 17 }); J.cena = 'jogo'; rodar(5);
+  var fim = BSI.data.finais[0];
+  J.abrirModal(new BSI.Estatisticas(fim)); rodar(5);
+  var L = J.modal.linhas().map(function (l) { return l[0]; }).join('|');
+  ['Tempo', 'Inimigos', 'caçados', 'web', 'excesso', 'Tia Zane', 'Conquistas'].forEach(function (k) { if (L.indexOf(k) < 0) throw new Error('estatística faltando: ' + k); });
+  rodar(70); segurar('confirmar', 1);
+  if (!J.modal || J.modal.constructor.name !== 'Creditos') throw new Error('estatísticas não levaram aos créditos');
+  I.toqueSegura('ataque', true); rodar(1200); I.toqueSegura('ataque', false); rodar(80);
+  if (J.modal) throw new Error('os créditos não terminaram');
+  if (J.cena !== 'titulo') throw new Error('depois dos créditos não voltou pro título');
+  // créditos pelo menu: Esc volta pro menu sem mexer em nada
+  J.abrirModal(new BSI.Creditos(null, true)); rodar(80); segurar('pausa', 1);
+  if (J.modal) throw new Error('Esc não fechou os créditos do menu');
+  // galeria: as duas abas, rolando até o fim
+  J.abrirModal(new BSI.Galeria2()); rodar(2);
+  var gal = J.modal; if (gal.itens().length !== BSI.data.finais.length) throw new Error('aba de finais com quantidade errada');
+  segurar('dir', 1); if (gal.aba !== 1 || gal.itens().length !== CQ.lista.length) throw new Error('aba de conquistas não abriu');
+  for (var k = 0; k < CQ.lista.length - 1; k++) segurar('baixo', 1);
+  if (gal.sel !== CQ.lista.length - 1) throw new Error('galeria não chegou no último item');
+  if (gal.ini <= 0 && gal.porTela() < CQ.lista.length) throw new Error('galeria não rola');
+  segurar('pausa', 1); if (J.modal) throw new Error('galeria não fecha');
+  c.conquistas = {}; BSI.state.stats.cacas = 0;
+});
 fumaca('pausa, salvar e continuar', function () {
   J.abrirModal(J.pausa()); rodar(10); J.fecharModal();
   J.salvar();
