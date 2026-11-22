@@ -4,7 +4,9 @@ Aventura de ação 2D em tempo real, com visão de cima e pixel art. Você troca
 
 Roda no navegador e é feito só com HTML, CSS e JavaScript, sem instalar nada. Para jogar, **dê dois cliques no `index.html`**.
 
-> **Estado atual: Atualização final pré-1.0 — Etapas 1 a 4 de 5 prontas** (mapas, luz, minimapa, grupo, gráficos, combate e **diálogos: falas de combate, conversas de estrada, fofocas, chefes falando e cutscenes expandidas**). Falta a Etapa 5 (polimento e v1.0).
+> **Versão 1.0** — o jogo completo: prólogo, 3 atos, interlúdio, 5 chefes, 7 finais, 22 conquistas e trilha sonora própria. O que mudou em cada versão está no [CHANGELOG.md](CHANGELOG.md).
+
+Pensado pra durar de **1 hora a 1 hora e meia** na dificuldade normal (Cabra da Peste), jogando com calma e conversando com todo mundo.
 
 O jogo é **para PC** (Windows, no navegador, teclado e mouse). Controle de videogame é opcional.
 
@@ -33,7 +35,7 @@ O jogo é **para PC** (Windows, no navegador, teclado e mouse). Controle de vide
 | E ou Espaço | falar / interagir / avançar diálogo |
 | M | mapa completo |
 | Esc (ou P) | pausa |
-| F1 | modo debug |
+| F1 | modo debug (só funciona abrindo com `index.html?debug=1`) |
 
 
 
@@ -67,7 +69,7 @@ Não precisa ficar trocando de personagem toda hora:
 - **Minimapa** (canto de cima à direita): só mostra o que o grupo já viu. Estrela = objetivo; se ele estiver longe, uma seta na borda diz a distância. **M** abre o mapa completo: roda do mouse dá zoom, arrastar move, clique marca um ponto.
 - **Opções (Pausa → Opções):** brilho, escuridão normal/reduzida, minimapa (ligar, posição, tamanho, transparência), companheiros com habilidade sozinhos ou não, som, volume e controles.
 
-### Gráficos (Etapa 2)
+### Gráficos
 Tudo continua sendo desenhado por código (nenhuma imagem baixada), agora com o **dobro de detalhe**:
 - **Personagens novos:** 32×48 pixels de arte, proporção realista, 4 a 5 tons por cor, luz vinda da esquerda e contorno suave. Animações: parado respirando (4 quadros), andar e correr (8), atacar (6), atirar (4), levar dano, cair e a **mania de cada um** quando fica parado uns segundos (Helano no celular, Miguel desenhando, Daniel com fósforo, João Pedro limpando o escapamento, Davi falando com o nada, Zé Neto lendo bula).
 - **Corpo e arma apontam pro mouse.** A arma aparece na mão (soca-tempo, calibre 20, peixeira, facão, maleta, chave inglesa), com clarão no tiro.
@@ -93,7 +95,7 @@ powershell -File tools\embutir_imagens.ps1 -Lista minha_lista.txt -Saida js\data
 ```
 Cada linha da lista: `nome|caminho\da\imagem.png|tamanho` (tamanho 0 = não muda). Depois é só pôr o `.js` novo no `index.html`, logo depois de `imagens_kenney.js`.
 
-### Combate (Etapa 3)
+### Combate
 - **27 armas** (config/weapons.js): 6 de fogo (soca-tempo, calibre 20, pressão, baladeira, pistola de prego, rojão), 11 corpo a corpo (peixeira, facão, foice, enxada, pá, relho, laço, maleta, chave inglesa, cadeira e taco de sinuca), 6 de arremesso (garrafa, traque, bomba de São João, pedra, farinha, pimenta) e **4 lendárias** que a história libera: a Chinela da Tia Zane, a Caixa de Som do Gojoba, o Braço do Paulo e o Lampião do Tio Ota (só os netos). Cada uma tem dano, cadência, alcance, pente, recarga, munição, espalhamento, empurrão, **barulho** (chama inimigo e, na mata, irrita a Caipora) e **raridade** com cor.
 - **Cada um carrega 3 armas** (principal, secundária, arremesso). O inventário é do grupo, mas cada arma fica com uma pessoa só. Na **tela de equipamento (I)** é só arrastar; passando o mouse aparecem os atributos e a **afinidade**: ★ se a pessoa é boa com a arma, ✗ se é ruim (ex.: Lapuca é mestre das espingardas, o Zé Neto tem mira tremida mas é ótimo com pimenta e farinha, o Miguel é mestre da baladeira, o Hugo recarrega rápido e destrava a pistola na hora, o João Carlos manda bem com garrafa, cadeira e taco de sinuca).
 - **Arma nova no chão:** aparece um cartão com nome, raridade e atributos, e você escolhe quem fica com ela.
@@ -106,7 +108,7 @@ Cada linha da lista: `nome|caminho\da\imagem.png|tamanho` (tamanho 0 = não muda
 - **Dificuldade:** Turista, Cabra da Peste ou Lapuca (escolhe no Novo Jogo; muda em Opções).
 - **Debug (F1):** ARSENAL (todas as armas no bornal e munição cheia), Campo de Tiro (bonecos de palha) e Arena (chama qualquer inimigo ou chefe).
 
-### Diálogos (Etapa 4)
+### Diálogos
 - **Falas de combate:** os 12 têm as suas (quase 290 no total), por situação: começar a briga, acertar, apanhar, sem munição, recarregar, trocar arma, ser curado, habilidade, derrubar um e amigo caído. Nunca repete a mesma fala duas vezes seguidas.
 - **49 conversas de estrada** em balão, sem pausar o jogo, conforme quem está no grupo: Davi e João Pedro no **idioma da família** (tudo com "-ôte"), os Amadeus brigando pelas regras da tribo, o Zé Neto diagnosticando todo mundo, o Lapuca encerrando discussão com uma frase.
 - **Reações:** caça, fogo se espalhando, web namorada do Helano, Tia Zane chegando, fake news do Stelo, poder de grupo, Juízo baixo, arma lendária.
@@ -126,7 +128,7 @@ Cada linha da lista: `nome|caminho\da\imagem.png|tamanho` (tamanho 0 = não muda
 - **Fogo:** o mato seco pega fogo e o fogo se espalha. Ele abre caminho, mas também queima o grupo (menos o Daniel, que só sorri).
 - **Caça:** caçar bicho sobe a **Raiva da Caipora**.
 
-### O que tem até agora
+### As fases
 | Fase | Onde | Grupo | O que acontece |
 |---|---|---|---|
 | **Prólogo — Duas da Manhã** | Terreiro do alpendre | João Pedro, Miguel, Daniel, Davi, Helano, Zé Neto | Pegar as espingardas e a cartucheira, chamar Trovão e Piaba, conversar com a turma. O Vander chega com o sonho da botija, e as escolhas mexem nas flags e na Desconfiança. |
@@ -209,8 +211,8 @@ Cada linha da lista: `nome|caminho\da\imagem.png|tamanho` (tamanho 0 = não muda
    - Como vencer: os três irmãos, os três netos e a fé do Vander. Com os irmãos unidos, o Diazepan deixa a alma lenta. O golpe final é **O Aboio do Tio Ota**.
    - **A Grande Fogueira:** se a Desconfiança estiver baixa, o Daniel acende uma fogueira gigante no meio da praça e o poder de grupo fica **infinito** até o fim. Ela é obrigatória para o Final Heroico.
 
-### Os finais
-O primeiro da lista cuja condição bater é o que acontece:
+### Os finais (⚠ spoiler)
+São 7. O primeiro da lista cuja condição bater é o que acontece:
 
 | Final | Condição |
 |---|---|
@@ -222,7 +224,7 @@ O primeiro da lista cuja condição bater é o que acontece:
 | Família reunida | Irmãos unidos + Tia Zane respeitada |
 | Meio-termo | Quando nenhum outro bate |
 
-No fim vêm os **créditos**, com quantos finais você já descobriu. Os finais vistos ficam guardados mesmo começando um jogo novo.
+Depois do final vem a tela **Como foi a noite** (tempo de jogo, inimigos, caças, golpes de web no Helano, excessos do Davi, carne roubada da Tia Zane, conquistas...) e os **créditos em folheto de cordel**. Os finais vistos e as conquistas ficam guardados mesmo começando um jogo novo.
 ### Poderes de grupo (G)
 A barra roxa embaixo dos corações enche quando você causa dano, usa habilidade e revive alguém. Cheia, ela libera o poder do grupo que tem pelo menos 2 membros juntos; se houver mais de um disponível, um menu pergunta qual usar. O **★ poder máximo** exige o grupo completo e só pode ser usado 1 vez por fase. Com Desconfiança alta, o poder pode falhar.
 
@@ -263,8 +265,30 @@ Fica na pausa e anota as pistas da botija. A cada partida o jogo **sorteia um se
 
 ---
 
+## Jogos salvos
+- **3 espaços de save**, cada um com nome, ato, tempo de jogo e data. No título: **Continuar**, **Novo jogo** (escolhe o espaço e dá um nome) e **Jogos salvos** (carregar, renomear, apagar, exportar e importar).
+- O jogo salva sozinho nas fogueiras e na troca de fase. Antes de gravar ele guarda a **cópia anterior**: se um save estragar (luz caiu no meio, por exemplo), aparece "save estragado" e o botão **Usar o save anterior**.
+- **Exportar** baixa um arquivo `botija-save-N.json`; **Importar** lê esse arquivo em outro PC ou navegador.
+- Saves de versões antigas continuam funcionando (viram o espaço 1).
+
+## Opções e acessibilidade (Pausa → Opções, ou no título)
+- **Gráficos:** Leve (PC fraco), Médio (padrão) ou Bonito. Efeitos de tela, brilho e escuridão reduzida.
+- **Som:** volume geral e volumes separados de **Música**, **Efeitos** e **Ambiente** (vento, grilo à noite).
+- **Legendas de sons:** os sons importantes aparecem escritos no canto, tipo `[assobio na mata]` ou `[cachorro latindo]`.
+- **Tamanho do texto** (normal/grande) e **velocidade do texto** (lenta, normal, rápida, instantânea).
+- **Tremor de tela** liga/desliga e **clarões e piscadas** normais/suaves.
+- **Modo daltônico:** o aviso de golpe vira amarelo (em vez de vermelho) e os inimigos no minimapa ficam rosa.
+- **Dicas de controle:** no começo, uma dica por vez aparece embaixo quando faz sentido ("[C] esquivar" quando tem inimigo perto) e some quando você faz. Dá pra desligar ou pedir pra mostrar tudo de novo.
+- **Controles:** todas as teclas podem ser trocadas. Tudo fica salvo.
+
+## Música
+A trilha é **composta por código** (nada de arquivo de áudio): melodias originais inspiradas no baião, no xote e no forró, tocadas por zabumba, triângulo, ganzá, baixo, pífano e sanfona sintetizados. Cada área e cada chefe tem a sua, e a troca é suave. Nenhuma música real.
+
+## Conquistas e finais
+No título, **Conquistas e finais** mostra os 7 finais e as 22 conquistas. O que você ainda não descobriu aparece como silhueta, com uma dica.
+
 ## Modo debug
-Aperte **F1** ou abra com `index.html?debug=1`. O painel permite:
+Abra com `index.html?debug=1` (o painel abre sozinho; depois **F1** liga e desliga). Sem o `?debug=1` o F1 não faz nada, pra ninguém abrir sem querer. O painel permite:
 - **pular para qualquer fase** (Prólogo, Ato I caçada, Ato I Paulo, fim), barra de poder a 100%, tirar uma fase do boss, Raiva a 75;
 - invencível, mostrar hitboxes (e a visão dos inimigos), sem recarga, munição infinita, luz total;
 - mexer nos medidores **Caipora / Desconfiança / Juízo** (com Juízo baixo os controles ficam doidos);
@@ -355,9 +379,15 @@ node tools/servidor.js
 ```
 O comando mostra um endereço `http://192.168.x.x:8080`. Abra esse endereço no navegador do celular conectado ao mesmo Wi-Fi.
 
-## Publicar de graça no GitHub Pages (jogar pelo celular com os amigos)
+## Mandar pros amigos (zip)
+O arquivo `dist/A-Botija-de-Santa-Isabel-v1.0.zip` tem só o que precisa pra jogar. Quem receber:
+1. Clica com o botão direito no zip → **Extrair tudo**.
+2. Abre a pasta e dá **dois cliques no `index.html`**. Pronto (Chrome, Edge ou Firefox).
+
+## Publicar de graça no GitHub Pages (jogar pelo link)
 1. Crie uma conta em https://github.com e um repositório novo e **público** (por exemplo, `botija`).
-2. Na página do repositório, clique em **Add file → Upload files**. Arraste **todo o conteúdo** da pasta do jogo (`index.html`, `css`, `js`, `tools`, `README.md`) e clique em **Commit changes**.
+2. Na página do repositório, clique em **Add file → Upload files**. Extraia o zip da versão e arraste **o conteúdo** dele (`index.html`, `css`, `js`, `README.md`, `CHANGELOG.md`) e clique em **Commit changes**.
+   - Se você usa Git: `git remote add origin https://github.com/SEU-USUARIO/botija.git`, depois `git push -u origin main --tags`.
 3. Vá em **Settings → Pages**. Em **Source**, escolha **Deploy from a branch**, depois a branch **main** e a pasta **/(root)**, e clique em **Save**.
 4. Em 1 ou 2 minutos aparece o link `https://SEU-USUARIO.github.io/botija/`. Mande esse link para a turma.
 5. **Dica:** no celular, use **"Adicionar à tela inicial"** no menu do navegador para abrir o jogo como se fosse um app.
@@ -385,20 +415,19 @@ js/entities/          personagens, herói, IA dos companheiros, habilidades,
 js/story/             estado/flags/medidores, executor de diálogos, data/ (conteúdo)
 js/ui/                HUD, minimapa/mapa completo, opções e controles, caixa de diálogo,
                       menus, minigames, controles de toque (desligados no PC)
+js/core/musica.js     trilha sonora composta por código e o som ambiente
+js/ui/saves.js        os 3 espaços de save (carregar, renomear, exportar, importar)
+js/ui/tutorial.js     dicas de controle na hora certa
+js/ui/telas_finais.js conquistas, estatísticas do fim e galeria
 js/main.js            telas, checkpoint, troca de mapa, laço principal
-tools/validate.js     validador + teste de fumaça
+tools/validate.js     validador + teste de fumaça (node tools/validate.js)
 tools/servidor.js     servidor local opcional
 ```
 
-## Próximas etapas
-1. ~~Protótipo jogável~~ ✅
-2. ~~Prólogo, Ato 1, poderes de grupo e boss Paulo do Zé Baixinho~~ ✅
-3. ~~Interlúdio e boss Alma da Casa do Dudu~~ ✅
-4. ~~Ato II, bosses Gojoba e Gadernal~~ ✅
-5. ~~Ato III, boss Rafael CDs e os finais~~ ✅
-6. Atualização final pré-1.0:
-   1. ~~Mapas, iluminação, minimapa e o grupo que se vira sozinho~~ ✅
-   2. ~~Gráficos: boneco novo, cenário 32×32, retratos, luz, interface de cordel~~ ✅
-   3. ~~Combate: 27 armas, equipamento, mira, esquiva, impacto, 8 inimigos, combos, dificuldade~~ ✅
-   4. ~~Diálogos: falas de combate, conversas de estrada, reações, fofocas, chefes e cutscenes~~ ✅
-   5. Polimento e versão 1.0
+## Para quem mexe no código
+- Rode `node tools/validate.js` depois de qualquer mudança. Ele confere os dados (mapas, diálogos, finais, ordem dos scripts) e joga o jogo sozinho: todas as fases, todos os mapas, os 5 chefes, os 7 finais até os créditos, saves, música, opções e dicas. Tem que terminar com **TUDO CERTO**.
+- O histórico está no Git: `git log --oneline`. A versão de lançamento tem a etiqueta `v1.0`.
+
+## Créditos
+Criado por **José Neto**. Em memória do **Tio Ota**, o maior vaqueiro de Santa Isabel.
+Partículas e ícones de teclas: Kenney (kenney.nl), licença CC0. Todos os políticos do jogo são fictícios.
