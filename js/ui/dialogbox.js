@@ -8,9 +8,11 @@
   var VEL = 55;       // letras por segundo
   var acum = 0;
 
+  function passoOp() { return BSI.acess && BSI.acess.textoGrande() ? 15 : 13; }
   function geometria() {
     var W = BSI.view.w, H = BSI.view.h;
     var h = BSI.view.retrato ? 78 : 62;
+    if (BSI.acess && BSI.acess.textoGrande()) h = Math.min(Math.round(H * 0.42), h + 22);
     return { x: 4, y: H - h - 4, w: W - 8, h: h };
   }
 
@@ -19,7 +21,7 @@
       if (!R.ativo) return;
       var I = BSI.input;
       if (R.linha && !R.escolha && R.mostrados < R.linha.texto.length) {
-        acum += dt * VEL;
+        acum += dt * (BSI.acess ? BSI.acess.velTexto() : VEL);
         while (acum >= 1) {
           acum -= 1; R.mostrados++;
           if (R.mostrados % 3 === 0 && R.linha.texto[R.mostrados] !== ' ') BSI.audio.sfx('blip');
@@ -51,7 +53,7 @@
       if (!R.escolha) return -1;
       var gm = geometria();
       for (var i = 0; i < R.escolha.opcoes.length; i++) {
-        var oy = gm.y + 14 + i * 13;
+        var oy = gm.y + 14 + i * passoOp();
         if (x > gm.x + 50 && x < gm.x + gm.w && y > oy - 2 && y < oy + 11) return i;
       }
       return -1;
@@ -88,8 +90,8 @@
       }
       if (R.escolha) {
         R.escolha.opcoes.forEach(function (o, i) {
-          var oy = gm.y + 14 + i * 13;
-          if (i === R.escolha.sel) { g.fillStyle = 'rgba(211,155,58,0.35)'; g.fillRect(gm.x + 52, oy - 2, gm.w - 58, 12); }
+          var oy = gm.y + 14 + i * passoOp();
+          if (i === R.escolha.sel) { g.fillStyle = 'rgba(211,155,58,0.35)'; g.fillRect(gm.x + 52, oy - 2, gm.w - 58, passoOp() - 1); }
         });
       }
       // setinha de "continua"
@@ -106,10 +108,11 @@
       var tx = gm.x + (temRetrato ? 54 : 10);
       var larg = gm.x + gm.w - 10 - tx;
       var tam = BSI.view.retrato ? 8 : 7.5;
+      if (BSI.acess && BSI.acess.textoGrande()) tam += 1.5;
       if (R.escolha) {
         Tx.escrever('O que fazer?', gm.x + 10, gm.y + 4, { tam: 6, cor: C.ocre });
         R.escolha.opcoes.forEach(function (o, i) {
-          var oy = gm.y + 14 + i * 13;
+          var oy = gm.y + 14 + i * passoOp();
           var sel = i === R.escolha.sel;
           Tx.escrever((sel ? '▸ ' : '  ') + o.txt, gm.x + 54, oy, { tam: tam, cor: sel ? C.amarelo : C.creme });
         });

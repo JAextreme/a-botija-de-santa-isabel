@@ -101,7 +101,7 @@
       spr.vermelho = {};
       for (var d in spr.dirs) {
         spr.branco[d] = spr.dirs[d].map(function (c) { return silhueta(c); });
-        spr.vermelho[d] = spr.dirs[d].map(function (c) { return silhueta(c, '#e8403a'); });
+        spr.vermelho[d] = spr.dirs[d].map(function (c) { return silhueta(c, BSI.acess ? BSI.acess.corAviso() : '#e8403a'); });
       }
       // retrato: recorte da cabeça de frente
       var rt = novoCanvas(16, 13);
@@ -123,7 +123,7 @@
           sh.dirs.left.push(r2.c); sh.dirs.right.push(espelhar(r2));
         }
         if (okHd) {
-          ['left', 'right'].forEach(function (d) { sh.branco[d] = sh.dirs[d].map(function (c) { return silhueta(c); }); sh.vermelho[d] = sh.dirs[d].map(function (c) { return silhueta(c, '#e8403a'); }); });
+          ['left', 'right'].forEach(function (d) { sh.branco[d] = sh.dirs[d].map(function (c) { return silhueta(c); }); sh.vermelho[d] = sh.dirs[d].map(function (c) { return silhueta(c, BSI.acess ? BSI.acess.corAviso() : '#e8403a'); }); });
           sh.retrato = sh.dirs.left[0]; sh.retratoEsc = 2;
           cache[chave] = sh;
           return sh;

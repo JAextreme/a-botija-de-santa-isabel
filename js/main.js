@@ -260,15 +260,18 @@
         var yA = my + 9, yB = yA + 10, yC = yB + t1 + 3, yD = yC + t2 + 4;
         var mh = yD + 14 - my;
         BSI.telas.moldura(g, mx, my, mw, mh);
-        J.menuTitulo.desenhar(g);
+        var cheia = J.modal && J.modal.telaCheia; // tela cheia (opções, créditos...) esconde o título
+        if (!cheia) J.menuTitulo.desenhar(g);
         if (J.modal) J.modal.desenhar(g);
         // textos
+        if (!cheia) {
         Tx.escrever('— A —', W / 2, yA, { tam: 8, alinhar: 'center', cordel: true, cor: C.contorno, contorno: false });
         Tx.escrever('BOTIJA', W / 2, yB, { tam: t1, alinhar: 'center', cordel: true, cor: C.barro, corContorno: C.contorno, grossura: 3 });
         Tx.escrever('DE SANTA ISABEL', W / 2, yC, { tam: t2, alinhar: 'center', cordel: true, cor: C.contorno, contorno: false });
         Tx.escrever('uma aventura do sertão', W / 2, yD, { tam: 6, alinhar: 'center', cor: '#5a4030', contorno: false, negrito: false });
         J.menuTitulo.desenharTexto();
-        Tx.escrever('Atualização pré-1.0 (etapa 4 de 5)   v' + BSI.cfg.VERSAO, W / 2, H - 10, { tam: 5.5, alinhar: 'center', cor: '#9a8a80' });
+        Tx.escrever('v' + BSI.cfg.VERSAO, W - 4, H - 8, { tam: 5, alinhar: 'right', cor: '#8a7a70', contorno: false });
+        }
         if (J.modal) J.modal.desenharTexto();
       } else if (J.mundo) {
         J.mundo.desenhar(g);

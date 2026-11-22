@@ -724,7 +724,7 @@
     }
     if (this.chefe && !this.chefe.morto) { var lc = this.chefe.luz ? this.chefe.luz() : { x: this.chefe.x, y: this.chefe.y - 14, r: 30, forca: 0.55 }; if (lc) r.push(lc); }
     for (i = 0; i < this.vagalumes.length; i++) { var lv = this.vagalumes[i].luz(); if (lv) r.push(lv); }
-    for (i = 0; i < this.claroes.length; i++) r.push({ x: this.claroes[i].x, y: this.claroes[i].y, r: 60, forca: 1, cor: '#fff1a8' });
+    for (i = 0; i < this.claroes.length; i++) r.push({ x: this.claroes[i].x, y: this.claroes[i].y, r: BSI.acess && BSI.acess.semFlash() ? 30 : 60, forca: BSI.acess && BSI.acess.semFlash() ? 0.45 : 1, cor: '#fff1a8' });
     for (i = 0; i < this.efeitos.length; i++) {
       var ef = this.efeitos[i];
       if (ef.tipo === 'galao') r.push({ x: ef.x, y: ef.y, r: 14, forca: 0.6 });
@@ -738,7 +738,8 @@
   // as luzes estranhas no céu (igual às histórias de Quixadá)
   function desenharLuzesCeu(g, W, Hh, t, resto) {
     var a = Math.min(1, resto);
-    g.globalAlpha = 0.12 * a * (0.6 + Math.sin(t * 9) * 0.4); g.fillStyle = '#a0ffd8'; g.fillRect(0, 0, W, Hh); g.globalAlpha = 1;
+    var suave = BSI.acess && BSI.acess.semFlash();
+    g.globalAlpha = (suave ? 0.06 : 0.12 * (0.6 + Math.sin(t * 9) * 0.4)) * a; g.fillStyle = '#a0ffd8'; g.fillRect(0, 0, W, Hh); g.globalAlpha = 1;
     for (var i = 0; i < 4; i++) {
       var x = Math.round(W * (0.2 + i * 0.2) + Math.sin(t * (0.8 + i * 0.3)) * 30), y = Math.round(14 + Math.cos(t * (1.1 + i * 0.2)) * 8);
       g.fillStyle = 'rgba(160,255,220,' + (0.5 + Math.sin(t * 6 + i) * 0.4).toFixed(2) + ')'; g.fillRect(x - 2, y - 1, 5, 3); g.fillStyle = '#ffffff'; g.fillRect(x, y, 1, 1);

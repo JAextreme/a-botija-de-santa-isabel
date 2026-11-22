@@ -132,7 +132,7 @@
       }
 
       // ---------- ARMA NA MÃO (embaixo, à esquerda) ----------
-      if (L) {
+      if (L && !BSI.dialogo.ativo) { // durante a conversa a caixa de diálogo ocupa esse canto
         var EA = L.arma, ax = 4, ay = H - 36;
         caixa(g, ax, ay, 70, 22, 'rgba(30,20,40,0.9)', false);
         var artA = BSI.boneco.arma(EA.id);
@@ -233,7 +233,7 @@
       }
 
       // arma na mão: nome e munição (pente / total)
-      if (L) {
+      if (L && !BSI.dialogo.ativo) {
         var EA2 = L.arma, ax2 = 4, ay2 = BSI.view.h - 36;
         Tx.escrever(EA2.nomeCompleto || EA2.nome, ax2 + 33, ay2 + 3, { tam: 4.5, cor: (BSI.config.raridades[EA2.raridade] || {}).cor, grossura: 1.5 });
         var txtM = EA2.tipo === 'corpo' ? 'corpo a corpo' : (L.recarga ? 'recarregando...' : (EA2.pente ? EA2.peca.pente + ' / ' + (EA2.mun ? BSI.armas.mun(EA2.mun) : '∞') : (EA2.mun ? BSI.armas.mun(EA2.mun) + ' ' + BSI.config.municoes[EA2.mun].nome : '∞')));
@@ -301,11 +301,11 @@
       }
 
       // avisos
-      var ya = 50;
+      var ya = 50, tamA = BSI.acess && BSI.acess.textoGrande() ? 8.5 : 7;
       avisos.forEach(function (a) {
-        Tx.quebrar(a.txt, W - 24, 7).forEach(function (l) {
-          Tx.escrever(l, W / 2, ya, { tam: 7, alinhar: 'center', cor: a.cor, alfa: Math.min(1, a.t * 2) });
-          ya += 9;
+        Tx.quebrar(a.txt, W - 24, tamA).forEach(function (l) {
+          Tx.escrever(l, W / 2, ya, { tam: tamA, alinhar: 'center', cor: a.cor, alfa: Math.min(1, a.t * 2) });
+          ya += tamA + 2;
         });
         ya += 1;
       });
@@ -313,8 +313,9 @@
       // legendas de som (embaixo, à esquerda, acima dos retratos)
       var yl = BSI.view.h - 48;
       for (var li = legendas.length - 1; li >= 0; li--) {
-        Tx.escrever('[' + legendas[li].txt + ']', 6, yl, { tam: 7, cor: '#f4e6b0', alfa: Math.min(1, legendas[li].t * 2), fundo: 'rgba(0,0,0,0.55)' });
-        yl -= 10;
+        var tamL = BSI.acess && BSI.acess.textoGrande() ? 8.5 : 7;
+        Tx.escrever('[' + legendas[li].txt + ']', 6, yl, { tam: tamL, cor: '#f4e6b0', alfa: Math.min(1, legendas[li].t * 2) });
+        yl -= tamL + 3;
       }
 
       // faixa do excesso

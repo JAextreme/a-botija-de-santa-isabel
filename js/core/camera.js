@@ -48,7 +48,7 @@
     else this.y = BSI.util.clamp(this.y, 0, mh - vh);
   };
 
-  Camera.prototype.tremer = function (forca) { this.tremor = Math.max(this.tremor, forca); };
+  Camera.prototype.tremer = function (forca) { if (BSI.acess && BSI.acess.semTremor()) return; this.tremor = Math.max(this.tremor, forca); };
 
   // posição inteira para desenhar (pixel perfeito)
   Camera.prototype.ix = function () { return Math.round(this.x + this.ox); };

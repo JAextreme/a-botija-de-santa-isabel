@@ -1217,6 +1217,29 @@ fumaca('v1.0: TRILHA SONORA — toda faixa, todo chefe, volumes separados', func
   A.alternarLegendas();
   if (audioFalso.erros.length) throw new Error('uso errado do Web Audio: ' + audioFalso.erros.slice(0, 3).join(' | '));
 });
+fumaca('v1.0: ACESSIBILIDADE — opções salvas e funcionando', function () {
+  var c = BSI.save.cfg(), A = BSI.acess;
+  // percorre TODAS as linhas das opções (com rolagem) e muda cada valor ida e volta
+  BSI.opcoes.abrir(null); rodar(2);
+  var op = J.modal; if (!op || !op.porTela) throw new Error('opções não abriram');
+  var total = 0, vistas = {};
+  for (var k = 0; k < 60; k++) { vistas[op.sel] = !!op.linha(op.sel); segurar('baixo', 1); rodar(1); total++; }
+  Object.keys(vistas).forEach(function (i) { if (!vistas[i]) throw new Error('linha ' + i + ' das opções ficou fora da tela'); });
+  J.fecharModal();
+  // tremor desligado
+  c.semTremor = true; J.recriarMundo('terreiro', BSI.data.maps.terreiro.inicio); rodar(5);
+  J.mundo.camera.tremor = 0; J.mundo.camera.tremer(5); if (J.mundo.camera.tremor !== 0) throw new Error('tremor desligado ainda treme');
+  c.semTremor = false; J.mundo.camera.tremer(2); if (!(J.mundo.camera.tremor > 0)) throw new Error('tremor ligado não treme');
+  // daltônico muda a cor do aviso
+  c.daltonico = true; if (A.corAviso() === '#e8403a') throw new Error('modo daltônico não mudou a cor do aviso'); c.daltonico = false;
+  // velocidade do texto
+  c.velTexto = 'lenta'; var lenta = A.velTexto(); c.velTexto = 'rapida'; if (!(A.velTexto() > lenta)) throw new Error('velocidade do texto não muda'); c.velTexto = 'normal';
+  // texto grande: caixa de diálogo cresce e nada estoura
+  c.textoTam = 'grande'; rodar(30); c.textoTam = 'normal';
+  BSI.save.salvarCfg(c);
+  var salvo = JSON.parse(armazenamento['bsi.cfg'] || armazenamento[Object.keys(armazenamento).filter(function (k) { return /cfg/.test(k); })[0]] || '{}');
+  if (salvo.velTexto !== 'normal' || salvo.semTremor !== false) throw new Error('as opções de acessibilidade não foram salvas');
+});
 fumaca('pausa, salvar e continuar', function () {
   J.abrirModal(J.pausa()); rodar(10); J.fecharModal();
   J.salvar();

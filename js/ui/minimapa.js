@@ -175,7 +175,7 @@
         else if (p instanceof BSI.Npc && p.dialogo && visto(p.x, p.y)) ponto(p.x, p.y, '#6ab0f0', 2);
       });
       var L = m.lider();
-      m.inimigos.forEach(function (e) { if (!e.morto && e.time === 'inimigos' && U.dist(e, L) < 200) ponto(e.x, e.y, e.chefe ? '#ff4040' : '#e8503a', e.chefe ? 3 : 2); });
+      m.inimigos.forEach(function (e) { if (!e.morto && e.time === 'inimigos' && U.dist(e, L) < 200) ponto(e.x, e.y, BSI.acess ? BSI.acess.corInimigo(e.chefe) : (e.chefe ? '#ff4040' : '#e8503a'), e.chefe ? 3 : 2); });
       m.herois.forEach(function (h) { if (h !== L && !h.caido) ponto(h.x, h.y, '#f2e6c9', 1); });
       var marca = BSI.state.marcas && BSI.state.marcas[m.mapa.id];
       if (marca) ponto(marca.x * T + 8, marca.y * T + 8, Math.floor(tempo * 3) % 2 ? '#ff7ad8' : '#ffffff', 3);

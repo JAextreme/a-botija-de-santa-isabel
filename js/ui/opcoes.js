@@ -7,6 +7,19 @@
   'use strict';
   var C = BSI.cor, Tx = BSI.texto;
   function cfg() { return BSI.save.cfg(); }
+
+  // ---------------- ACESSIBILIDADE (v1.0) ----------------
+  var VEL_TEXTO = { lenta: 28, normal: 55, rapida: 110, instantanea: 100000 };
+  var NOME_VEL = { lenta: 'lenta', normal: 'normal', rapida: 'rápida', instantanea: 'instantânea' };
+  BSI.acess = {
+    daltonico: function () { return !!cfg().daltonico; },
+    corAviso: function () { return cfg().daltonico ? '#ffe14a' : '#e8403a'; },   // golpe chegando
+    corInimigo: function (chefe) { return cfg().daltonico ? (chefe ? '#ff40ff' : '#ff7af0') : (chefe ? '#ff4040' : '#e8503a'); },
+    semTremor: function () { return !!cfg().semTremor; },
+    semFlash: function () { return !!cfg().semFlash; },
+    textoGrande: function () { return cfg().textoTam === 'grande'; },
+    velTexto: function () { return VEL_TEXTO[cfg().velTexto] || VEL_TEXTO.normal; }
+  };
   function salvar() { BSI.save.salvarCfg(cfg()); }
   function ciclar(lista, atual, dir) { var i = lista.indexOf(atual); if (i < 0) i = 0; return lista[(i + dir + lista.length) % lista.length]; }
   var VM = function () { return BSI.config.visual.minimapa; };
@@ -43,15 +56,29 @@
     { nome: '  Efeitos', valor: function () { return Math.round(BSI.audio.volBarra('efeitos') * 100) + '%'; }, mudar: function (d) { BSI.audio.mudarBarra('efeitos', d * 0.1); BSI.audio.sfx('pegar'); } },
     { nome: '  Ambiente', valor: function () { return Math.round(BSI.audio.volBarra('ambiente') * 100) + '%'; }, mudar: function (d) { BSI.audio.mudarBarra('ambiente', d * 0.1); } },
     { nome: 'Legendas de sons', valor: function () { return BSI.audio.legendasLigadas ? 'ligadas' : 'desligadas'; }, mudar: function () { BSI.audio.alternarLegendas(); } },
+    { nome: 'Tamanho do texto', valor: function () { return cfg().textoTam === 'grande' ? 'grande' : 'normal'; }, mudar: function () { cfg().textoTam = cfg().textoTam === 'grande' ? 'normal' : 'grande'; } },
+    { nome: 'Velocidade do texto', valor: function () { return NOME_VEL[cfg().velTexto || 'normal']; }, mudar: function (d) { cfg().velTexto = ciclar(['lenta', 'normal', 'rapida', 'instantanea'], cfg().velTexto || 'normal', d); } },
+    { nome: 'Tremor de tela', valor: function () { return cfg().semTremor ? 'desligado' : 'ligado'; }, mudar: function () { cfg().semTremor = !cfg().semTremor; } },
+    { nome: 'Clarões e piscadas', valor: function () { return cfg().semFlash ? 'suaves' : 'normais'; }, mudar: function () { cfg().semFlash = !cfg().semFlash; } },
+    { nome: 'Modo daltônico', valor: function () { return cfg().daltonico ? 'ligado (aviso amarelo, inimigo rosa)' : 'desligado'; }, mudar: function () { cfg().daltonico = !cfg().daltonico; BSI.sprites.limpar(); } },
     { nome: 'Controles (trocar teclas)', valor: function () { return '▶'; }, abrir: function (volta) { BSI.jogo.abrirModal(new Controles(volta)); } },
     { nome: 'Voltar', valor: function () { return ''; }, voltar: true }
   ];
 
-  function Opcoes(volta) { this.sel = 0; this.volta = volta; this.t = 0; }
+  function Opcoes(volta) { this.sel = 0; this.ini = 0; this.volta = volta; this.t = 0; }
   Opcoes.prototype.telaCheia = true;
+  Opcoes.prototype.passo = function () { return 12; };
+  Opcoes.prototype.porTela = function () { return Math.max(5, Math.floor((BSI.view.h - 54) / this.passo())); };
+  // i = índice do item; fora da janela visível devolve null
   Opcoes.prototype.linha = function (i) {
-    var passo = Math.max(11, Math.min(14, Math.floor((BSI.view.h - 54) / ITENS.length)));
-    return { x: 20, y: 30 + i * passo, w: BSI.view.w - 40, h: passo - 2 };
+    var k = i - this.ini; if (k < 0 || k >= this.porTela()) return null;
+    return { x: 20, y: 30 + k * this.passo(), w: BSI.view.w - 40, h: this.passo() - 2 };
+  };
+  Opcoes.prototype.rolar = function () {
+    var pt = this.porTela();
+    if (this.sel < this.ini) this.ini = this.sel;
+    if (this.sel >= this.ini + pt) this.ini = this.sel - pt + 1;
+    this.ini = Math.max(0, Math.min(this.ini, ITENS.length - pt));
   };
   Opcoes.prototype.sair = function () { salvar(); BSI.audio.sfx('menu'); BSI.jogo.abrirModal(this.volta ? this.volta() : null); if (!this.volta) BSI.jogo.fecharModal(); };
   Opcoes.prototype.atualizar = function (dt) {
@@ -61,11 +88,13 @@
     if (I.apertou('cima')) { this.sel = (this.sel - 1 + n) % n; BSI.audio.sfx('menu'); }
     if (I.apertou('baixo')) { this.sel = (this.sel + 1) % n; BSI.audio.sfx('menu'); }
     // mouse: passa por cima seleciona, clique muda
-    if (I.mouse.dentro) for (var i = 0; i < n; i++) { var r = this.linha(i); if (I.mouse.x >= r.x && I.mouse.x < r.x + r.w && I.mouse.y >= r.y && I.mouse.y < r.y + r.h && (I.mouse.x !== this.mx || I.mouse.y !== this.my)) this.sel = i; }
+    if (I.mouse.roda) { this.ini = Math.max(0, Math.min(n - this.porTela(), this.ini + (I.mouse.roda > 0 ? 1 : -1))); this.sel = Math.max(this.ini, Math.min(this.ini + this.porTela() - 1, this.sel)); }
+    if (I.mouse.dentro) for (var i = 0; i < n; i++) { var r = this.linha(i); if (r && I.mouse.x >= r.x && I.mouse.x < r.x + r.w && I.mouse.y >= r.y && I.mouse.y < r.y + r.h && (I.mouse.x !== this.mx || I.mouse.y !== this.my)) this.sel = i; }
     this.mx = I.mouse.x; this.my = I.mouse.y;
     var it = ITENS[this.sel], d = 0;
     if (I.apertou('esq')) d = -1; if (I.apertou('dir')) d = 1;
-    var clicou = I.toque && (function () { var r = self.linha(self.sel); return I.toque.x >= r.x && I.toque.x < r.x + r.w && I.toque.y >= r.y && I.toque.y < r.y + r.h; })();
+    this.rolar();
+    var clicou = I.toque && (function () { var r = self.linha(self.sel); return r && I.toque.x >= r.x && I.toque.x < r.x + r.w && I.toque.y >= r.y && I.toque.y < r.y + r.h; })();
     if (clicou || (I.apertou('confirmar') || I.apertou('interagir'))) {
       if (it.voltar) { this.sair(); return; }
       if (it.abrir) { salvar(); var me = this; it.abrir(function () { return me; }); BSI.audio.sfx('confirma'); return; }
@@ -77,7 +106,7 @@
     var W = BSI.view.w, H = BSI.view.h;
     g.fillStyle = 'rgba(10,6,20,0.92)'; g.fillRect(0, 0, W, H);
     for (var i = 0; i < ITENS.length; i++) {
-      var r = this.linha(i), s = i === this.sel;
+      var r = this.linha(i), s = i === this.sel; if (!r) continue;
       g.fillStyle = s ? C.ocre : 'rgba(30,20,40,0.85)'; g.fillRect(r.x, r.y, r.w, r.h);
       if (s) { g.fillStyle = C.amarelo; g.fillRect(r.x, r.y, r.w, 1); g.fillRect(r.x, r.y + r.h - 1, r.w, 1); }
     }
@@ -85,8 +114,10 @@
   Opcoes.prototype.desenharTexto = function () {
     var W = BSI.view.w, H = BSI.view.h;
     Tx.escrever('OPÇÕES', W / 2, 12, { tam: 12, alinhar: 'center', cordel: true, cor: C.amarelo });
+    if (this.ini > 0) Tx.escrever('▲ mais', W - 22, 21, { tam: 6, alinhar: 'right', cor: C.amarelo });
+    if (this.ini + this.porTela() < ITENS.length) Tx.escrever('▼ mais', W - 22, 30 + this.porTela() * this.passo() - 1, { tam: 6, alinhar: 'right', cor: C.amarelo });
     for (var i = 0; i < ITENS.length; i++) {
-      var r = this.linha(i), s = i === this.sel, it = ITENS[i];
+      var r = this.linha(i), s = i === this.sel, it = ITENS[i]; if (!r) continue;
       Tx.escrever(it.nome, r.x + 6, r.y + 2, { tam: 7, cor: s ? C.contorno : C.creme, contorno: !s });
       var v = it.valor();
       if (v) Tx.escrever((it.mudar && s ? '◀ ' : '') + v + (it.mudar && s ? ' ▶' : ''), r.x + r.w - 6, r.y + 2, { tam: 7, alinhar: 'right', cor: s ? C.contorno : C.amarelo, contorno: !s });
@@ -96,7 +127,6 @@
 
   // ---------------- CONTROLES ----------------
   var GRUPOS = ['cima', 'baixo', 'esq', 'dir', 'correr', 'ataque', 'mira', 'recarregar', 'esquiva', 'interagir', 'habilidade', 'poder', 'proximo', 'ordem', 'mapa', 'equipamento', 'travar', 'rodaArmas', 'hab1', 'hab2', 'hab3', 'hab4', 'hab5', 'hab6', 'pausa'];
-  var EM_BREVE = { mira: 1, recarregar: 1, esquiva: 1, equipamento: 1, travar: 1, rodaArmas: 1 }; // chegam na etapa de combate
   function Controles(volta) { this.sel = 0; this.ini = 0; this.volta = volta; this.esperando = null; this.t = 0; }
   Controles.prototype.telaCheia = true;
   Controles.prototype.lista = function () { return GRUPOS.concat(['__padrao', '__voltar']); };
@@ -143,7 +173,7 @@
     Tx.escrever('CONTROLES', W / 2, 10, { tam: 12, alinhar: 'center', cordel: true, cor: C.amarelo });
     for (var i = 0; i < pt && this.ini + i < L.length; i++) {
       var k = this.ini + i, a = L[k], y = 30 + i * 11, s = k === this.sel;
-      var nome = a === '__padrao' ? 'Restaurar o padrão' : (a === '__voltar' ? 'Voltar' : (I.NOMES[a] || a) + (EM_BREVE[a] ? ' (em breve)' : ''));
+      var nome = a === '__padrao' ? 'Restaurar o padrão' : (a === '__voltar' ? 'Voltar' : (I.NOMES[a] || a));
       Tx.escrever(nome, 30, y + 1.5, { tam: 6.5, cor: s ? C.contorno : C.creme, contorno: !s });
       if (a.indexOf('__') !== 0) {
         var teclas = I.teclasDe(a).map(function (c) { return I.nomeTecla(c); }).join('  /  ');

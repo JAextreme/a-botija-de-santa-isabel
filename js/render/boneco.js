@@ -406,7 +406,7 @@
     ['down', 'up', 'left', 'right'].forEach(function (dir) {
       self.dirs[dir] = [self.quadro('parado', dir, 0), self.quadro('andar', dir, 2), self.quadro('andar', dir, 6)];
       self.branco[dir] = self.dirs[dir].map(function (c) { return self.flash(c, '#ffffff'); });
-      self.vermelho[dir] = self.dirs[dir].map(function (c) { return self.flash(c, '#e8403a'); });
+      self.vermelho[dir] = self.dirs[dir].map(function (c) { return self.flash(c, BSI.acess ? BSI.acess.corAviso() : '#e8403a'); });
     });
     // retratinho do HUD: recorte da cabeça de frente
     var rt = canvas(32, 26), g = rt.getContext('2d');

@@ -13,7 +13,7 @@
     TILE: 16,          // tamanho do tile em pixels virtuais
     DT: 1 / 60,        // passo fixo da física (60 Hz)
     MAX_FRAME: 0.25,   // maior "pulo" de tempo aceito num quadro (evita espiral da morte)
-    VERSAO: '0.5.0-completo'
+    VERSAO: '1.0'
   };
 
   // Espaços para cada parte do jogo
