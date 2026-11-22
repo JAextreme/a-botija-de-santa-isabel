@@ -216,6 +216,8 @@
         else { f.espera -= dt; if (f.espera <= 0) f.alvo = 0; }
       }
       var bloqueado = f.alvo === 1;
+      // dicas de controle (antes de tudo: vê a tecla antes de a pausa abrir)
+      if (BSI.tutorial && J.cena === 'jogo' && J.mundo && !bloqueado) BSI.tutorial.atualizar(dt, J.mundo);
 
       if (J.cena === 'titulo') {
         J.tTitulo += dt;

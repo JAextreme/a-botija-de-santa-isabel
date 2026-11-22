@@ -310,6 +310,8 @@
         ya += 1;
       });
 
+      if (BSI.tutorial) BSI.tutorial.desenharTexto();
+
       // legendas de som (embaixo, à esquerda, acima dos retratos)
       var yl = BSI.view.h - 48;
       for (var li = legendas.length - 1; li >= 0; li--) {

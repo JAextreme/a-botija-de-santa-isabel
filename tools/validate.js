@@ -1240,6 +1240,39 @@ fumaca('v1.0: ACESSIBILIDADE — opções salvas e funcionando', function () {
   var salvo = JSON.parse(armazenamento['bsi.cfg'] || armazenamento[Object.keys(armazenamento).filter(function (k) { return /cfg/.test(k); })[0]] || '{}');
   if (salvo.velTexto !== 'normal' || salvo.semTremor !== false) throw new Error('as opções de acessibilidade não foram salvas');
 });
+fumaca('v1.0: TUTORIAL — dicas aparecem na hora certa e somem quando aprende', function () {
+  var T = BSI.tutorial; T.esquecerTudo(); T.atual = null; T.ok = 0; T.tJogo = 0;
+  J.recriarMundo('terreiro', BSI.data.maps.terreiro.inicio); J.cena = 'jogo'; rodar(5); avancarHistoria(400);
+  rodar(3);
+  if (!T.atual || T.atual.def.id !== 'andar') throw new Error('a primeira dica devia ser andar, veio ' + (T.atual && T.atual.def.id));
+  if (!/\[/.test(T.atual.def.txt())) throw new Error('a dica não mostra a tecla');
+  segurar('dir', 70);
+  if (!(BSI.save.cfg().dicas || {}).andar) throw new Error('andou e a dica de andar não sumiu');
+  // dicas de combate só com bicho/inimigo perto
+  rodar(90);
+  if (T.atual && ['ataque', 'esquiva', 'mira', 'habilidade', 'recarregar'].indexOf(T.atual.def.id) >= 0) throw new Error('dica de combate sem inimigo perto: ' + T.atual.def.id);
+  var M = J.mundo, L = M.lider(); M.inimigos.push(new BSI.Inimigo('jagunco', L.x + 60, L.y)); T.atual = null; T.ok = 0;
+  var pedidas = {};
+  for (var k = 0; k < 9000 && Object.keys(pedidas).length < 12; k++) {
+    rodar(1);
+    if (BSI.dialogo.ativo || J.modal) { if (J.modal) J.fecharModal(); avancarHistoria(50); }
+    if (T.atual && !pedidas[T.atual.def.id]) {
+      var id = T.atual.def.id; pedidas[id] = true;
+      var acao = { andar: 'dir', correr: 'correr', interagir: 'interagir', ataque: 'ataque', esquiva: 'esquiva', recarregar: 'recarregar', mira: 'mira', habilidade: 'habilidade', proximo: 'proximo', trocarArma: 'rodaArmas', mapa: 'mapa', pausa: 'pausa' }[id];
+      if (id === 'correr') { I.toqueSegura('correr', true); I.toqueSegura('dir', true); rodar(40); I.toqueSegura('correr', false); I.toqueSegura('dir', false); }
+      else segurar(acao, 3);
+      rodar(2);
+      if (J.modal) J.fecharModal();
+      if (!(BSI.save.cfg().dicas || {})[id]) throw new Error('fez o que a dica "' + id + '" pedia e ela não foi aprendida');
+    }
+    M.herois.forEach(function (h) { h.vida = 6; });
+    L = M.lider(); if (!M.inimigos.some(function (e) { return !e.morto && BSI.util.dist(e, L) < 60; })) M.inimigos.push(new BSI.Inimigo('jagunco', L.x + 40, L.y));
+  }
+  ['ataque', 'esquiva', 'proximo', 'mapa', 'pausa'].forEach(function (id) { if (!pedidas[id]) throw new Error('a dica "' + id + '" nunca apareceu'); });
+  BSI.save.cfg().dicasLigadas = false; T.atual = null; T.esquecerTudo(); rodar(10);
+  if (T.atual) throw new Error('dicas desligadas e mesmo assim apareceu uma');
+  BSI.save.cfg().dicasLigadas = true; M.inimigos.forEach(function (e) { e.morto = true; });
+});
 fumaca('pausa, salvar e continuar', function () {
   J.abrirModal(J.pausa()); rodar(10); J.fecharModal();
   J.salvar();

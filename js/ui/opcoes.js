@@ -61,6 +61,8 @@
     { nome: 'Tremor de tela', valor: function () { return cfg().semTremor ? 'desligado' : 'ligado'; }, mudar: function () { cfg().semTremor = !cfg().semTremor; } },
     { nome: 'Clarões e piscadas', valor: function () { return cfg().semFlash ? 'suaves' : 'normais'; }, mudar: function () { cfg().semFlash = !cfg().semFlash; } },
     { nome: 'Modo daltônico', valor: function () { return cfg().daltonico ? 'ligado (aviso amarelo, inimigo rosa)' : 'desligado'; }, mudar: function () { cfg().daltonico = !cfg().daltonico; BSI.sprites.limpar(); } },
+    { nome: 'Dicas de controle', valor: function () { return cfg().dicasLigadas === false ? 'desligadas' : 'ligadas'; }, mudar: function () { cfg().dicasLigadas = cfg().dicasLigadas === false; } },
+    { nome: 'Mostrar as dicas de novo', valor: function () { return '↺'; }, abrir: function () { BSI.tutorial.esquecerTudo(); cfg().dicasLigadas = true; BSI.hud.aviso('As dicas de controle vão aparecer de novo.'); } },
     { nome: 'Controles (trocar teclas)', valor: function () { return '▶'; }, abrir: function (volta) { BSI.jogo.abrirModal(new Controles(volta)); } },
     { nome: 'Voltar', valor: function () { return ''; }, voltar: true }
   ];
