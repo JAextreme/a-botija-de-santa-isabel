@@ -384,13 +384,22 @@ O arquivo `dist/A-Botija-de-Santa-Isabel-v1.0.zip` tem só o que precisa pra jog
 1. Clica com o botão direito no zip → **Extrair tudo**.
 2. Abre a pasta e dá **dois cliques no `index.html`**. Pronto (Chrome, Edge ou Firefox).
 
+## O .exe (jogo num arquivo só)
+`dist/A-Botija-de-Santa-Isabel.exe` (440 KB) tem o jogo inteiro dentro. Ao abrir, ele copia o jogo pra `%LOCALAPPDATA%\BotijaSantaIsabel` e abre numa **janela própria do Edge** (sem barra de endereço). Os saves ficam guardados ali.
+- Pra gerar de novo depois de mudar o jogo: `powershell -ExecutionPolicy Bypass -File tools\criar_exe.ps1` (usa só o compilador que já vem no Windows).
+- **Aviso do Windows:** como o .exe não tem assinatura digital paga, o Windows mostra "O Windows protegeu o computador". Clique em **Mais informações → Executar assim mesmo**.
+- **Smart App Control:** em PCs com o *Controle Inteligente de Aplicativos* ligado (Segurança do Windows → Controle de aplicativos e navegador), o Windows **bloqueia o .exe sem opção de liberar**. Nesses PCs use o zip, o atalho abaixo ou o link do GitHub Pages.
+
+### Atalho "Jogar" (neste PC)
+`Jogar - A Botija de Santa Isabel.lnk`, na pasta do jogo, abre o jogo na mesma janela própria do Edge, com o ícone da botija. Funciona mesmo com o Smart App Control ligado (quem roda é o Edge). Pode arrastar o atalho pra Área de Trabalho. Ele aponta pra esta pasta: se mudar a pasta de lugar, o atalho para de funcionar.
+
 ## Publicar de graça no GitHub Pages (jogar pelo link)
 1. Crie uma conta em https://github.com e um repositório novo e **público** (por exemplo, `botija`).
 2. Na página do repositório, clique em **Add file → Upload files**. Extraia o zip da versão e arraste **o conteúdo** dele (`index.html`, `css`, `js`, `README.md`, `CHANGELOG.md`) e clique em **Commit changes**.
    - Se você usa Git: `git remote add origin https://github.com/SEU-USUARIO/botija.git`, depois `git push -u origin main --tags`.
 3. Vá em **Settings → Pages**. Em **Source**, escolha **Deploy from a branch**, depois a branch **main** e a pasta **/(root)**, e clique em **Save**.
 4. Em 1 ou 2 minutos aparece o link `https://SEU-USUARIO.github.io/botija/`. Mande esse link para a turma.
-5. **Dica:** no celular, use **"Adicionar à tela inicial"** no menu do navegador para abrir o jogo como se fosse um app.
+5. **Dica:** no celular, use **"Adicionar à tela inicial"** no menu do navegador para abrir o jogo como se fosse um app. No PC, no Edge: menu **⋯ → Aplicativos → Instalar este site como aplicativo**. Vira um ícone no menu Iniciar, com janela própria, e funciona em qualquer PC (inclusive com o Smart App Control ligado).
 
 Para atualizar, é só subir os arquivos de novo. O save de cada pessoa fica no navegador dela.
 
@@ -422,6 +431,7 @@ js/ui/telas_finais.js conquistas, estatísticas do fim e galeria
 js/main.js            telas, checkpoint, troca de mapa, laço principal
 tools/validate.js     validador + teste de fumaça (node tools/validate.js)
 tools/servidor.js     servidor local opcional
+tools/criar_exe.ps1   monta o .exe (tools/exe/lancador.cs + ícone + o jogo dentro)
 ```
 
 ## Para quem mexe no código

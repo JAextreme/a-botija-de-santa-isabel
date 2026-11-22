@@ -1,5 +1,10 @@
 # cópias de segurança (zip) e o pacote de lançamento ficam fora do git
+# (o .exe e o zip vão como arquivos da "Release" no GitHub)
 backups/
 dist/
 _tmp/
-.claude/settings.local.json
+.claude/
+# só no PC do autor
+PROMPT_A_BOTIJA_DE_SANTA_ISABEL.md
+fotos/
+*.lnk

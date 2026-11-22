@@ -41,7 +41,12 @@ A atualização final pré-1.0, feita em 5 etapas.
 - Duas conversas de estrada podiam tocar com alguém que não estava no grupo.
 - A isca de carne contra a alma podia travar o estado da luta.
 
+### Versão .exe
+- `dist/A-Botija-de-Santa-Isabel.exe` (440 KB): o jogo inteiro num arquivo só, abrindo numa janela própria do Edge, com ícone de botija. Feito com o compilador que já vem no Windows (`tools/criar_exe.ps1`).
+- Atalho "Jogar" pra abrir o jogo na mesma janela própria sem precisar do .exe.
+
 ### Problemas conhecidos
+- O .exe não tem assinatura digital: o Windows mostra um aviso (dá pra liberar), e nos PCs com o **Smart App Control** ligado ele é bloqueado de vez. Nesses, use o zip, o atalho ou o link do GitHub Pages.
 - O jogo é pensado pra PC. No celular abre, mas não foi polido pra tela de toque.
 - O navegador só libera o som depois do primeiro clique ou tecla (regra dos navegadores).
 - Cada navegador guarda os saves separados. Pra levar o jogo pra outro PC, use **Jogos salvos → Exportar**.
