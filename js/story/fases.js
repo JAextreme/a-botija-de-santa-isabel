@@ -117,7 +117,7 @@
         case 'flag': BSI.story.flag(p[1], p[2]); break;
         case 'medidor': BSI.story.medidor(p[1], p[2]); break;
         case 'som': BSI.audio.sfx(p[1]); break;
-        default: console.warn('Passo de roteiro desconhecido:', tipo);
+        default: BSI.params.debug && console.warn('Passo de roteiro desconhecido:', tipo);
       }
     }
   };
@@ -132,7 +132,7 @@
     // começa uma fase: escurece, monta o grupo e o mapa, mostra a cartela e a abertura
     iniciar: function (id, semCartela) {
       var f = BSI.data.fases[id], J = BSI.jogo;
-      if (!f) { console.warn('Fase inexistente', id); return; }
+      if (!f) { BSI.params.debug && console.warn('Fase inexistente', id); return; }
       R.parar();
       J.fadeOut(function () {
         var S = BSI.state;
@@ -166,7 +166,7 @@
 
     pista: function (id) {
       var S = BSI.state, p = BSI.data.pistas[id];
-      if (!p) { console.warn('Pista inexistente', id); return; }
+      if (!p) { BSI.params.debug && console.warn('Pista inexistente', id); return; }
       S.pistas = S.pistas || [];
       if (S.pistas.indexOf(id) >= 0) return;
       S.pistas.push(id);
@@ -180,7 +180,7 @@
       S.eventos = S.eventos || {};
       if (S.eventos[nome]) return;
       var fn = BSI.data.eventos[nome];
-      if (!fn) { console.warn('Evento inexistente', nome); return; }
+      if (!fn) { BSI.params.debug && console.warn('Evento inexistente', nome); return; }
       var r = fn(mundo);
       if (r === 'depois') return;      // ainda não é a hora (tenta quando entrar de novo)
       S.eventos[nome] = true;

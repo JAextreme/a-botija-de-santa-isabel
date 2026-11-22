@@ -204,7 +204,7 @@
     atualizar: function (dt) {
       var I = BSI.input;
       I.comecarPasso();
-      if (I.apertou('debug')) BSI.debug.alternar();
+      if (I.apertou('debug') && BSI.params.debug) BSI.debug.alternar(); // modo debug só com ?debug=1 no endereço
       BSI.hud.atualizar(dt);
 
       // fade
