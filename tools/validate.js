@@ -110,6 +110,32 @@ var janela = {
   console: console, Math: Math, JSON: JSON, Date: Date, Proxy: Proxy, Uint8Array: Uint8Array, Uint8ClampedArray: Uint8ClampedArray,
   Object: Object, Array: Array, String: String, Number: Number, Error: Error, parseInt: parseInt, isNaN: isNaN
 };
+// Web Audio de mentira: roda TODO o código de som/música e reclama de uso errado
+var audioFalso = { tempo: 0, nos: 0, erros: [] };
+function parametro(nome) {
+  return {
+    value: 1,
+    setValueAtTime: function (v, t) { if (!isFinite(v) || !isFinite(t)) audioFalso.erros.push(nome + ' setValueAtTime(' + v + ',' + t + ')'); this.value = v; },
+    linearRampToValueAtTime: function (v, t) { if (!isFinite(v) || !isFinite(t)) audioFalso.erros.push(nome + ' linearRamp(' + v + ')'); },
+    exponentialRampToValueAtTime: function (v, t) { if (!(v > 0) || !isFinite(t)) audioFalso.erros.push(nome + ' exponentialRamp com valor ' + v + ' (o navegador dá erro)'); },
+    setTargetAtTime: function (v, t, c) { if (!isFinite(v) || !isFinite(t) || !(c > 0)) audioFalso.erros.push(nome + ' setTarget(' + v + ')'); },
+    cancelScheduledValues: noop
+  };
+}
+function noAudio(extra) { audioFalso.nos++; var n = { connect: function (d) { if (!d) audioFalso.erros.push('connect sem destino'); return d; }, disconnect: noop, start: noop, stop: noop }; for (var k in extra) n[k] = extra[k]; return n; }
+janela.AudioContext = function () {
+  this.state = 'running'; this.sampleRate = 8000; this.destination = noAudio({});
+  Object.defineProperty(this, 'currentTime', { get: function () { return audioFalso.tempo; } });
+};
+janela.AudioContext.prototype = {
+  resume: noop,
+  createGain: function () { return noAudio({ gain: parametro('gain') }); },
+  createOscillator: function () { return noAudio({ type: 'sine', frequency: parametro('frequency') }); },
+  createBiquadFilter: function () { return noAudio({ type: 'lowpass', frequency: parametro('filtro') }); },
+  createBufferSource: function () { return noAudio({ buffer: null, loop: false }); },
+  createBuffer: function (c, n) { var d = new Float32Array(n); return { getChannelData: function () { return d; } }; }
+};
+janela.Float32Array = Float32Array;
 janela.window = janela;
 janela.navigator = janela.navigator;
 var ctx = vm.createContext(janela);
@@ -1159,6 +1185,37 @@ fumaca('v1.0: 3 ESPAÇOS DE SAVE, save corrompido, exportar/importar', function 
   // a tela abre e fecha
   J.abrirModal(new BSI.TelaSaves('gerenciar')); rodar(10); segurar('pausa', 1); rodar(3);
   SV.apagarJogo(2); SV.apagarJogo(3); SV.usarSlot(1);
+});
+fumaca('v1.0: TRILHA SONORA — toda faixa, todo chefe, volumes separados', function () {
+  var A = BSI.audio, Mu = BSI.musica;
+  A.destravar();
+  if (!A.ctx()) throw new Error('o áudio não ligou');
+  // cada faixa toca uns segundos sem erro e sem criar nó demais
+  Object.keys(Mu.FAIXAS).forEach(function (id) {
+    Mu.desejada = id; var antes = audioFalso.nos;
+    for (var k = 0; k < 600; k++) { audioFalso.tempo += 1 / 60; Mu.atualizar(); }
+    if (Mu.atual !== id) throw new Error('não trocou pra faixa ' + id);
+    var porSeg = (audioFalso.nos - antes) / 10;
+    if (porSeg > 400) throw new Error('faixa ' + id + ' cria nó de áudio demais: ' + Math.round(porSeg) + '/s');
+    if (porSeg < 2) throw new Error('faixa ' + id + ' está muda');
+  });
+  // todo mapa tem faixa; todo chefe tem a sua
+  Object.keys(BSI.data.maps).forEach(function (id) { if (!Mu.POR_MAPA[id]) throw new Error('mapa sem música: ' + id); });
+  Object.keys(BSI.chefes).forEach(function (id) { if (!Mu.POR_CHEFE[id]) throw new Error('chefe sem música: ' + id); });
+  J.recriarMundo('campo_roma', BSI.data.maps.campo_roma.inicio); rodar(10);
+  var M = J.mundo;
+  if (M.chefe) { M.chefe.ativo = true; M.chefe.estado = 'anda'; Mu.escolher(M); if (Mu.desejada !== 'paulo') throw new Error('luta do Paulo sem a música dele: ' + Mu.desejada); M.chefe.ativo = false; }
+  // efeitos sonoros: todos tocam sem erro
+  Object.keys(A.sons).forEach(function (n) { audioFalso.tempo += 0.1; A.sfx(n); });
+  // volumes separados salvam
+  var mAntes = A.volBarra('musica'); A.mudarBarra('musica', -0.3);
+  if (Math.abs(BSI.save.cfg().vol_musica - (mAntes - 0.3)) > 0.01) throw new Error('volume da música não salvou');
+  A.mudarBarra('musica', 0.3);
+  // legenda aparece quando ligada
+  if (!A.legendasLigadas) A.alternarLegendas();
+  audioFalso.tempo += 1; A.sfx('assobio');
+  A.alternarLegendas();
+  if (audioFalso.erros.length) throw new Error('uso errado do Web Audio: ' + audioFalso.erros.slice(0, 3).join(' | '));
 });
 fumaca('pausa, salvar e continuar', function () {
   J.abrirModal(J.pausa()); rodar(10); J.fecharModal();

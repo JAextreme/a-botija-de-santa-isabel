@@ -234,6 +234,14 @@
         }
       }
 
+      // trilha sonora: título, mapa, chefe, perseguição, créditos
+      if (BSI.musica) {
+        var nomeModal = J.modal && J.modal.constructor && J.modal.constructor.name;
+        if (nomeModal === 'Creditos' || nomeModal === 'Estatisticas') BSI.musica.desejada = 'creditos';
+        else if (J.cena === 'titulo') { BSI.musica.desejada = 'titulo'; BSI.musica.ambiente.desejado = null; }
+        else if (J.mundo) BSI.musica.escolher(J.mundo);
+        try { BSI.musica.atualizar(); } catch (e) { }
+      }
       if (BSI.cordel) BSI.cordel.atualizarCursor();
       J.tDebug -= dt;
       if (J.tDebug <= 0) { J.tDebug = 0.5; BSI.debug.sincronizar(); }

@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  var ctx = null, mestre = null, ruidoBuf = null;
+  var ctx = null, mestre = null, ruidoBuf = null, geral = null, barras = {};
   var cfg = BSI.save.cfg();
   var ultimo = {}; // anti-metralhadora: limita repetição do mesmo som
 
@@ -17,8 +17,10 @@
     if (!AC) return;
     try {
       ctx = new AC();
-      mestre = ctx.createGain();
-      mestre.connect(ctx.destination);
+      // mixagem (v1.0): geral -> Efeitos / Música / Ambiente, cada um com seu volume
+      geral = ctx.createGain(); geral.connect(ctx.destination);
+      ['efeitos', 'musica', 'ambiente'].forEach(function (b) { barras[b] = ctx.createGain(); barras[b].connect(geral); });
+      mestre = barras.efeitos;
       aplicarVolume();
       // buffer de ruído branco reaproveitado (tiro, fogo, escapamento)
       var n = ctx.sampleRate * 1.5;
@@ -28,9 +30,68 @@
     } catch (e) { ctx = null; }
   }
 
+  var PADRAO = { efeitos: 1, musica: 0.6, ambiente: 0.8 };
+  function volBarra(b) { var v = cfg['vol_' + b]; return typeof v === 'number' ? v : PADRAO[b]; }
   function aplicarVolume() {
-    if (mestre) mestre.gain.value = cfg.mudo ? 0 : cfg.volume * 0.6;
+    if (!geral) return;
+    geral.gain.value = cfg.mudo ? 0 : cfg.volume * 0.6;
+    for (var b in barras) barras[b].gain.value = volBarra(b) * (b === 'musica' ? 0.55 : 1);
   }
+
+  // ---- instrumentos da trilha (tempo absoluto, saída escolhida) ----
+  function nota(f, t, dur, tipo, vol, out, ataque, filtro) {
+    var o = ctx.createOscillator(), g = ctx.createGain(); o.type = tipo; o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + (ataque || 0.01));
+    g.gain.setValueAtTime(vol, t + Math.max(ataque || 0.01, dur * 0.6)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    var ultimoNo = o;
+    if (filtro) { var fl = ctx.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = filtro; o.connect(fl); ultimoNo = fl; }
+    ultimoNo.connect(g); g.connect(out); o.start(t); o.stop(t + dur + 0.03);
+    return o;
+  }
+  function bate(t, out, dur, vol, freq, tipo, freqFim) {
+    var s = ctx.createBufferSource(); s.buffer = ruidoBuf;
+    var f = ctx.createBiquadFilter(); f.type = tipo; f.frequency.setValueAtTime(freq, t); if (freqFim) f.frequency.exponentialRampToValueAtTime(freqFim, t + dur);
+    var g = ctx.createGain(); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f); f.connect(g); g.connect(out); s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.02);
+  }
+  var INST = {
+    zabumba: function (t, out, v, agudo) {
+      if (agudo) { bate(t, out, 0.06, 0.25 * v, 1800, 'bandpass'); return; }
+      var o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine';
+      o.frequency.setValueAtTime(130, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.18);
+      g.gain.setValueAtTime(0.55 * v, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
+      o.connect(g); g.connect(out); o.start(t); o.stop(t + 0.3);
+      bate(t, out, 0.04, 0.12 * v, 600, 'lowpass');
+    },
+    triangulo: function (t, out, v, aberto) {
+      nota(5200, t, aberto ? 0.3 : 0.06, 'sine', 0.05 * v, out, 0.002);
+      nota(7900, t, aberto ? 0.22 : 0.05, 'sine', 0.025 * v, out, 0.002);
+    },
+    ganza: function (t, out, v) { bate(t, out, 0.07, 0.12 * v, 6000, 'highpass'); },
+    caixa: function (t, out, v) { bate(t, out, 0.12, 0.3 * v, 2200, 'bandpass'); nota(220, t, 0.06, 'triangle', 0.1 * v, out, 0.002); },
+    baixo: function (f, t, dur, out, v) { nota(f, t, dur, 'triangle', 0.32 * v, out, 0.01); nota(f * 2, t, dur * 0.5, 'sine', 0.06 * v, out, 0.01); },
+    pifano: function (f, t, dur, out) {
+      var o = nota(f * 2, t, Math.max(0.08, dur), 'sine', 0.1, out, 0.03);
+      if (dur > 0.25) { var vib = ctx.createOscillator(), vg = ctx.createGain(); vib.frequency.value = 5.5; vg.gain.value = f * 0.012; vib.connect(vg); vg.connect(o.frequency); vib.start(t + 0.12); vib.stop(t + dur + 0.03); }
+      bate(t, out, 0.04, 0.02, 3000, 'bandpass'); // sopro
+    },
+    sanfona: function (f, t, dur, out) {
+      // duas palhetas levemente desafinadas (o "chorinho" da sanfona)
+      nota(f, t, Math.max(0.08, dur), 'square', 0.045, out, 0.015, 1900);
+      nota(f * 1.004, t, Math.max(0.08, dur), 'sawtooth', 0.03, out, 0.015, 1500);
+      nota(f / 2, t, Math.max(0.08, dur), 'square', 0.018, out, 0.015, 900);
+    },
+    pad: function (f, t, dur, out) { nota(f, t, dur, 'triangle', 0.06, out, dur * 0.3); nota(f * 1.006, t, dur, 'sine', 0.05, out, dur * 0.35); },
+    grilo: function (f, t, out) { nota(f, t, 0.035, 'square', 0.012, out, 0.003, 6000); }
+  };
+
+  // legendas de sons importantes (acessibilidade): o HUD mostra "[assobio na mata]"
+  var LEGENDAS = {
+    assobio: 'assobio na mata', alma: 'gemido de alma penada', aboio: 'aboio de vaqueiro ao longe', latido: 'cachorro latindo',
+    celular: 'celular do Helano tocando', escapamento: 'ronco de moto de escapamento aberto', tiro: 'tiro', tiro20: 'tiro de espingarda',
+    explosao: 'explosão', fogo: 'fogo pegando', mugido: 'mugido de vaca', bode: 'bode berrando', apito: 'apito', vidro: 'vidro quebrando',
+    excesso: 'vinheta do excesso', buzina: 'buzina desafinada', alerta: 'alguém te viu!'
+  };
 
   // ---- blocos básicos ----
   // tom: frequência inicial, final, duração, forma de onda, volume
@@ -192,7 +253,13 @@
     explosao: function () { ruido(0.6, 0.55, 700, 'lowpass', 0, 60); tom(90, 30, 0.5, 'sine', 0.5); },
     estalo2: function () { ruido(0.04, 0.4, 5000, 'highpass'); tom(2000, 900, 0.03, 'square', 0.1); }, // relho
     recarga: function () { tom(700, 700, 0.03, 'square', 0.08); tom(500, 500, 0.04, 'square', 0.08, 0.08); },
-    ai: function () { tom(500, 300, 0.12, 'triangle', 0.12); }
+    ai: function () { tom(500, 300, 0.12, 'triangle', 0.12); },
+    // ---- acabamento (v1.0): cada coisa pegada tem seu som ----
+    moeda: function () { tom(1318, 1318, 0.05, 'square', 0.09); tom(1975, 1975, 0.16, 'square', 0.09, 0.05); },
+    cartucho: function () { tom(900, 600, 0.03, 'square', 0.1); ruido(0.03, 0.2, 3500, 'highpass', 0.05); tom(700, 500, 0.03, 'square', 0.08, 0.09); },
+    melhoria: function () { [523, 659, 784, 1046, 1318].forEach(function (f, i) { tom(f, f, 0.12, 'triangle', 0.13, i * 0.06); }); ruido(0.3, 0.1, 6000, 'highpass', 0.25); },
+    conquista: function () { [659, 784, 988, 1318].forEach(function (f, i) { tom(f, f, 0.18, 'square', 0.08, i * 0.09); tom(f * 2, f * 2, 0.1, 'sine', 0.05, i * 0.09); }); },
+    pagina: function () { ruido(0.12, 0.12, 2400, 'bandpass', 0, 900); }
   };
 
   BSI.audio = {
@@ -207,9 +274,23 @@
       ultimo[nome] = t;
       var f = SONS[nome];
       if (f) { try { f(); } catch (e) { } }
+      if (cfg.legendas && LEGENDAS[nome] && BSI.hud && BSI.hud.legenda) BSI.hud.legenda(LEGENDAS[nome]);
+    },
+    // ---- usados pela trilha (musica.js) ----
+    ctx: function () { return ctx && ctx.state !== 'closed' ? ctx : null; },
+    saida: function (b) { return barras[b] || null; },
+    ruidoBuffer: function () { return ruidoBuf; },
+    inst: INST,
+    legendas: LEGENDAS,
+    volBarra: volBarra,
+    mudarBarra: function (b, delta) {
+      cfg['vol_' + b] = BSI.util.clamp(Math.round((volBarra(b) + delta) * 10) / 10, 0, 1);
+      aplicarVolume(); BSI.save.salvarCfg(cfg);
     },
     get mudo() { return cfg.mudo; },
     get volume() { return cfg.volume; },
+    get legendasLigadas() { return !!cfg.legendas; },
+    alternarLegendas: function () { cfg.legendas = !cfg.legendas; BSI.save.salvarCfg(cfg); },
     alternarMudo: function () { cfg.mudo = !cfg.mudo; aplicarVolume(); BSI.save.salvarCfg(cfg); },
     mudarVolume: function (delta) {
       cfg.volume = BSI.util.clamp(Math.round((cfg.volume + delta) * 10) / 10, 0, 1);

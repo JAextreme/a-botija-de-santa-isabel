@@ -38,7 +38,11 @@
     { nome: 'Fogo amigo', valor: function () { return cfg().fogoAmigo ? 'ligado (cuidado!)' : 'desligado (o fogo do Daniel queima igual)'; }, mudar: function () { cfg().fogoAmigo = !cfg().fogoAmigo; } },
     { nome: 'Companheiros usam habilidade', valor: function () { return (cfg().autoHab || BSI.config.balance.grupo.autoHabilidades) === 'sim' ? 'sozinhos, quando faz sentido' : 'só quando eu pedir (1 a 6)'; }, mudar: function () { var a = cfg().autoHab || BSI.config.balance.grupo.autoHabilidades; cfg().autoHab = a === 'sim' ? 'pedir' : 'sim'; } },
     { nome: 'Som', valor: function () { return BSI.audio.mudo ? 'desligado' : 'ligado'; }, mudar: function () { BSI.audio.alternarMudo(); } },
-    { nome: 'Volume', valor: function () { return Math.round(BSI.audio.volume * 100) + '%'; }, mudar: function (d) { BSI.audio.mudarVolume(d * 0.1); } },
+    { nome: 'Volume geral', valor: function () { return Math.round(BSI.audio.volume * 100) + '%'; }, mudar: function (d) { BSI.audio.mudarVolume(d * 0.1); } },
+    { nome: '  Música', valor: function () { return Math.round(BSI.audio.volBarra('musica') * 100) + '%'; }, mudar: function (d) { BSI.audio.mudarBarra('musica', d * 0.1); } },
+    { nome: '  Efeitos', valor: function () { return Math.round(BSI.audio.volBarra('efeitos') * 100) + '%'; }, mudar: function (d) { BSI.audio.mudarBarra('efeitos', d * 0.1); BSI.audio.sfx('pegar'); } },
+    { nome: '  Ambiente', valor: function () { return Math.round(BSI.audio.volBarra('ambiente') * 100) + '%'; }, mudar: function (d) { BSI.audio.mudarBarra('ambiente', d * 0.1); } },
+    { nome: 'Legendas de sons', valor: function () { return BSI.audio.legendasLigadas ? 'ligadas' : 'desligadas'; }, mudar: function () { BSI.audio.alternarLegendas(); } },
     { nome: 'Controles (trocar teclas)', valor: function () { return '▶'; }, abrir: function (volta) { BSI.jogo.abrirModal(new Controles(volta)); } },
     { nome: 'Voltar', valor: function () { return ''; }, voltar: true }
   ];

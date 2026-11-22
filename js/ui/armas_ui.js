@@ -214,7 +214,7 @@
     var p = this.lista()[this.sel]; if (!p) return;
     var custo = AR().podeMelhorar(p);
     if (!custo) { BSI.hud.aviso('Essa aí já tá no máximo. Até o Hugo respeita.', '#d8cdb0'); return; }
-    if (AR().melhorar(p)) { BSI.audio.sfx('salvar'); BSI.hud.aviso('Hugo: "Pronto! Agora é ' + AR().nomeMelhoria(p.id, p.nivel).toUpperCase() + '."', C.amarelo); }
+    if (AR().melhorar(p)) { BSI.audio.sfx('melhoria'); BSI.hud.aviso('Hugo: "Pronto! Agora é ' + AR().nomeMelhoria(p.id, p.nivel).toUpperCase() + '."', C.amarelo); }
     else { BSI.audio.sfx('estalo'); BSI.hud.aviso('Falta sucata (' + custo + '). Cata nos capangas e cava com a pá.', '#ff9a7a'); }
   };
   Oficina.prototype.desenhar = function (g) {
@@ -246,15 +246,16 @@
   Bodega.prototype.preco = function (it) { return this.m && this.m.temNoGrupo('joaovitor') ? Math.ceil(it.preco * 0.8) : it.preco; };
   Bodega.prototype.comprar = function () {
     var it = PRATELEIRA[this.sel], s = AR().garantir(), p = this.preco(it), nome = BSI.config.municoes[it.mun].nome;
-    if (s.dinheiro >= p) { s.dinheiro -= p; BSI.hud.aviso('Pagou R$ ' + p + ': +' + it.qtd + ' ' + nome); }
+    var pagou = s.dinheiro >= p;
+    if (pagou) { s.dinheiro -= p; BSI.hud.aviso('Pagou R$ ' + p + ': +' + it.qtd + ' ' + nome); }
     else { s.fiado = (s.fiado || 0) + 1; BSI.hud.aviso('+' + it.qtd + ' ' + nome + ' NO FIADO (caderno: ' + s.fiado + ')', '#f0c75e'); }
-    AR().ganharMun(it.mun, it.qtd); BSI.audio.sfx('pegar');
+    AR().ganharMun(it.mun, it.qtd); BSI.audio.sfx(pagou ? 'moeda' : 'pegar');
   };
   Bodega.prototype.atualizar = function (dt) {
     var I = BSI.input, self = this, n = PRATELEIRA.length; this.t += dt;
     if (this.t > 0.2 && I.apertou('pausa')) { BSI.jogo.fecharModal(); return; }
-    if (I.apertou('cima')) this.sel = (this.sel - 1 + n) % n;
-    if (I.apertou('baixo')) this.sel = (this.sel + 1) % n;
+    if (I.apertou('cima')) { this.sel = (this.sel - 1 + n) % n; BSI.audio.sfx('menu'); }
+    if (I.apertou('baixo')) { this.sel = (this.sel + 1) % n; BSI.audio.sfx('menu'); }
     if (I.toque) { PRATELEIRA.forEach(function (it, i) { if (I.toque.y >= 30 + i * 13 && I.toque.y < 41 + i * 13) { self.sel = i; self.comprar(); } }); return; }
     if (this.t > 0.2 && (I.apertou('confirmar') || I.apertou('interagir'))) this.comprar();
   };

@@ -29,7 +29,7 @@
     var S = BSI.state;
     this.morto = true;
     if (this.chave) S.coletados[this.chave] = true;
-    BSI.audio.sfx('pegar');
+    BSI.audio.sfx({ municao: 'cartucho', dinheiro: 'moeda', sucata: 'moeda' }[this.item] || 'pegar');
     if (this.item === 'municao') { var q = Math.max(1, Math.round(this.qtd * (BSI.dificuldade ? BSI.dificuldade().municao : 1))) + (h.id === 'joaovitor' || mundo.temNoGrupo('joaovitor') ? 1 : 0); S.municao += q; BSI.hud.aviso('+' + q + ' cartucho' + (q > 1 ? 's' : '') + (q > this.qtd ? ' (o João Vitor pechinchou)' : '')); }
     else if (this.item === 'arma') { BSI.armas.pegarArma(this.arma, mundo, this.mun); }
     else if (this.item === 'sucata') { BSI.armas.garantir().sucata += this.qtd; BSI.hud.aviso('+' + this.qtd + ' sucata (pra Oficina do Hugo)'); }

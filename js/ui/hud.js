@@ -10,6 +10,7 @@
   var C = BSI.cor, Tx = BSI.texto;
 
   var avisos = [];      // {txt, t, cor}
+  var legendas = [];    // legendas de som: {txt, t}
   var faixa = null;     // {titulo, sub, extra, t}
   var medPisca = {};    // medidor → tempo piscando
 
@@ -54,10 +55,16 @@
       HUD.aviso(txt, bom ? '#9fe0a0' : '#ff9a7a');
     },
     medidorPisca: function (nome) { medPisca[nome] = 0.8; },
-    limpar: function () { avisos = []; faixa = null; },
+    // legenda de som (acessibilidade): "[assobio na mata]"
+    legenda: function (txt) {
+      for (var i = 0; i < legendas.length; i++) if (legendas[i].txt === txt) { legendas[i].t = 2.4; return; }
+      legendas.push({ txt: txt, t: 2.4 }); if (legendas.length > 3) legendas.shift();
+    },
+    limpar: function () { avisos = []; legendas = []; faixa = null; },
 
     atualizar: function (dt) {
       for (var i = avisos.length - 1; i >= 0; i--) { avisos[i].t -= dt; if (avisos[i].t <= 0) avisos.splice(i, 1); }
+      for (var j = legendas.length - 1; j >= 0; j--) { legendas[j].t -= dt; if (legendas[j].t <= 0) legendas.splice(j, 1); }
       if (faixa) { faixa.t -= dt; if (faixa.t <= 0) faixa = null; }
       for (var k in medPisca) medPisca[k] -= dt;
     },
@@ -302,6 +309,13 @@
         });
         ya += 1;
       });
+
+      // legendas de som (embaixo, à esquerda, acima dos retratos)
+      var yl = BSI.view.h - 48;
+      for (var li = legendas.length - 1; li >= 0; li--) {
+        Tx.escrever('[' + legendas[li].txt + ']', 6, yl, { tam: 7, cor: '#f4e6b0', alfa: Math.min(1, legendas[li].t * 2), fundo: 'rgba(0,0,0,0.55)' });
+        yl -= 10;
+      }
 
       // faixa do excesso
       if (faixa) {
