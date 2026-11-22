@@ -42,19 +42,19 @@
     },
     joaovitor: {
       nome: 'João Vitor', apelido: 'Miserável', curto: 'Miserável',
-      visual: { pele: '#c48a5a', cabelo: '#2b1d14', camisa: '#e0b040', calca: '#3a3a44', chapeu: '#a8402a', cabeca: 'bone', extras: ['faixa'], faixa: '#7a2a1c', acessorio: 'carteira' },
+      visual: { pele: '#e0b490', cabelo: '#2b1d14', camisa: '#f0d030', camisa2: '#2a8a3a', padrao: 'metade', calca: '#7ad0b8', chapeu: '#a8402a', cabeca: 'bone', extras: ['faixa', 'bigodinho'], faixa: '#7a2a1c', acessorio: 'carteira' },
       vel: 62, arma: 'peixeira', habilidade: 'labia', grupos: ['amadeus'],
       descricao: 'Mente com a cara mais lisa do mundo. Convence até jagunço.'
     },
     joaoluiz: {
       nome: 'João Luiz Amadeu', curto: 'João Luiz',
-      visual: { pele: '#b88050', cabelo: '#1a120c', camisa: '#4f7a3a', calca: '#4a3a2e', cabeca: 'curto', extras: ['faixa'], faixa: '#7a2a1c', acessorio: 'panela' },
+      visual: { pele: '#d8a882', cabelo: '#1a120c', camisa: '#2a9ad8', calca: '#4a3a2e', cabeca: 'liso', extras: ['faixa'], faixa: '#7a2a1c', acessorio: 'panela' },
       vel: 57, arma: 'facao', habilidade: 'lealdade', grupos: ['amadeus'],
       descricao: 'Leal à tribo acima de tudo. Escudo de tampa de panela.'
     },
     luizfernando: {
       nome: 'Luiz Fernando Amadeu', curto: 'Luiz Fernando',
-      visual: { pele: '#a87048', cabelo: '#1a120c', camisa: '#6a3a7a', calca: '#3a2e2a', cabeca: 'cacheado', extras: ['faixa', 'colar'], faixa: '#7a2a1c', acessorio: 'giz' },
+      visual: { pele: '#e2b892', cabelo: '#2b1d14', camisa: '#6a1e2e', calca: '#2a2a30', cabeca: 'liso', extras: ['faixa', 'colar', 'bigodinho'], faixa: '#7a2a1c', acessorio: 'giz' },
       vel: 58, arma: 'socaTempo', habilidade: 'ritual', grupos: ['amadeus'],
       descricao: 'Guardião dos rituais secretos da Tribo dos Amadeus.'
     },
@@ -66,31 +66,31 @@
     },
     davi: {
       nome: 'Davi', curto: 'Davi',
-      visual: { pele: '#c8905e', cabelo: '#3a2416', camisa: '#e0702a', camisa2: '#f0c75e', padrao: 'listra', calca: '#5a4030', cabeca: 'arrepiado', olhos: 'arregalado' },
+      visual: { pele: '#e2b48a', cabelo: '#b8904a', camisa: '#efe8d2', calca: '#5a4030', cabeca: 'liso', olhos: 'sono' },
       vel: 66, arma: 'peixeira', habilidade: 'tirarExcesso', grupos: ['familia'],
       descricao: 'Fala com bicho, tem um plano infalível (que falha) e grita "TIRAR O EXCESSO!".'
     },
     vander: {
       nome: 'Vander', curto: 'Vander',
-      visual: { pele: '#9a6a48', cabelo: '#111111', camisa: '#2a2438', calca: '#1e1a28', chapeu: '#1e1a2a', cabeca: 'capuz', olhos: 'brilho', extras: ['terco'] },
+      visual: { pele: '#e2b48e', cabelo: '#111111', camisa: '#2a2438', calca: '#1e1a28', chapeu: '#1e1a2a', cabeca: 'capuz', olhos: 'sono', extras: ['terco'] },
       vel: 60, arma: 'facao', habilidade: 'visao', grupos: ['alpendre'],
       descricao: 'Aparece e some. Sonha com o futuro. A reza dele afasta alma.'
     },
     miguel: {
       nome: 'Miguel', curto: 'Miguel',
-      visual: { pele: '#d09a6a', cabelo: '#2a1a10', camisa: '#2a2a33', calca: '#3b4a6a', cabeca: 'cacheado', acessorio: 'caderno' },
+      visual: { pele: '#e6bc96', cabelo: '#2a1a10', camisa: '#f4f4f0', camisa2: '#f0b088', padrao: 'listra', calca: '#3b4a6a', cabeca: 'arrepiado', extras: ['oculos'], acessorio: 'caderno' },
       vel: 70, arma: 'peixeira', habilidade: 'rouboMadrugada', grupos: ['netos'],
       descricao: 'Artista incompreendido e ladrão oficial da carne da Tia Zane.'
     },
     hugo: {
       nome: 'Hugo', curto: 'Hugo',
-      visual: { pele: '#b8804e', cabelo: '#2b1d14', camisa: '#d8c8a0', calca: '#3b5b8c', padrao: 'macacao', chapeu: '#6b6b73', cabeca: 'bone', extras: ['bigode'], acessorio: 'chave' },
+      visual: { pele: '#e0b088', cabelo: '#1a120c', camisa: '#b02a32', camisa2: '#f0d0d8', padrao: 'xadrez', calca: '#1e2a4a', cabeca: 'arrepiado', acessorio: 'chave' },
       vel: 57, arma: 'chave', habilidade: 'gambiarra', grupos: ['alpendre'],
       descricao: 'Mecânico da gambiarra. A Bros dele vive quebrando.'
     },
     daniel: {
       nome: 'Daniel', curto: 'Daniel',
-      visual: { pele: '#d0a070', cabelo: '#1e140e', camisa: '#8a3b2a', calca: '#2a2a33', cabeca: 'liso', boca: 'sorriso', acessorio: 'galao' },
+      visual: { pele: '#e0b48c', cabelo: '#4a2e1c', camisa: '#f2f2f2', camisa2: '#1a1a1a', padrao: 'listra', calca: '#2a2a33', cabeca: 'arrepiado', extras: ['mascara'], acessorio: 'galao' },
       vel: 60, arma: 'facao', habilidade: 'fogo', grupos: ['netos'],
       descricao: 'Neto do Tio Ota. Querosene e fósforo. Sorri enquanto tudo queima.'
     },
@@ -123,7 +123,7 @@
     dudu: { nome: 'Dudu', visual: { pele: '#a87048', cabelo: '#8a8a8a', camisa: '#3b5b8c', camisa2: '#253a5e', padrao: 'xadrez', calca: '#5a4030', chapeu: '#e0c27a', cabeca: 'palha', extras: ['barba'] } },
     // ---- Santa Isabel (Ato II) ----
     stelo: { nome: 'Stelo', visual: { pele: '#c08858', cabelo: '#2b1d14', camisa: '#f2e6c9', camisa2: '#d0c6b0', padrao: 'listra', calca: '#3a3a44', cabeca: 'careca', extras: ['bigode'], acessorio: 'celular' } },
-    felipe: { nome: 'Felipe Parceiro', visual: { pele: '#c8905e', cabelo: '#1e140e', camisa: '#3a8a8a', camisa2: '#2a6a6a', padrao: 'listra', calca: '#2f3a5a', cabeca: 'liso', extras: ['oculosEscuros', 'colar'], acessorio: 'celular' } },
+    felipe: { nome: 'Felipe Parceiro', visual: { pele: '#d6a47c', cabelo: '#1e140e', camisa: '#f0de8a', calca: '#2f3a5a', cabeca: 'curto', boca: 'sorriso', extras: ['oculos'], acessorio: 'celular' } },
     socorro: { nome: 'Dona Socorro da Bodega', visual: { pele: '#b88050', cabelo: '#4a4a4a', camisa: '#c45a8a', camisa2: '#a04070', padrao: 'vestido', calca: '#c45a8a', cabeca: 'coque', extras: ['oculos'], acessorio: 'caderno' } },
     padre: { nome: 'Padre Anselmo', visual: { pele: '#d2a07a', cabelo: '#8a8a8a', camisa: '#1e1a28', camisa2: '#2a2438', padrao: 'jaleco', calca: '#1e1a28', cabeca: 'curto', extras: ['oculos', 'terco'] } },
     benedita: { nome: 'Dona Benedita Rezadeira', visual: { pele: '#8a5a3a', cabelo: '#e8e8e8', camisa: '#f2e6c9', camisa2: '#d8cdb0', padrao: 'vestido', calca: '#f2e6c9', cabeca: 'coque', extras: ['terco'] } },

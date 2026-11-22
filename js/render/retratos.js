@@ -118,6 +118,15 @@
     if (tem('barba')) Q.elipse(cx, cy + 12, rx - 1, 9, cab, 1, function (x, y) { return y > cy + 6 && !(Math.abs(x - cx) < 5 && y < by + 3 && y > by - 2); });
     if (tem('bigode')) for (var bg = -6; bg <= 6; bg++) { Q.set(cx + bg, by - 3 + Math.abs(bg) * 0.25, cab); Q.set(cx + bg, by - 2 + Math.abs(bg) * 0.3, luz(cab, 0.1)); }
     if (tem('oculos')) { [oE, oD].forEach(function (x0) { for (var a = 0; a < 24; a++) { var an = a / 24 * Math.PI * 2; Q.set(x0 + Math.cos(an) * 5, olhoY + Math.sin(an) * 4, rgb('#2a2a33')); } }); Q.rect(cx - 2, olhoY - 1, 4, 1, rgb('#2a2a33')); Q.set(oE - 2, olhoY - 2, rgb('#ffffff')); }
+    if (tem('bigodinho')) { var bgd = luz(cab, 0.25).map(function (v, k) { return v * 0.75 + pele[k] * 0.25; }); for (var bb = -4; bb <= 4; bb++) Q.set(cx + bb, by - 2 + (Math.abs(bb) > 3 ? 0.4 : 0), bgd); }
+    if (tem('mascara')) { // máscara respiradora (Daniel): cobre nariz e boca
+      Q.rect(cx - rx, olhoY + 5, 6, 2, rgb('#1a1a1e')); Q.rect(cx + rx - 5, olhoY + 5, 6, 2, rgb('#1a1a1e')); // tiras
+      Q.elipse(cx, olhoY + 10, 9, 7.5, rgb('#7a7e86'), 1);
+      Q.elipse(cx - 10, olhoY + 12, 3.5, 4, rgb('#b8bec6'), 1); Q.elipse(cx + 10, olhoY + 12, 3.5, 4, rgb('#b8bec6'), 1);
+      Q.elipse(cx, by + 3, 5.5, 4.5, rgb('#24242a'), 0.6);
+      Q.rect(cx - 5, by, 11, 2, rgb('#e8c030'));
+      for (var mf = -3; mf <= 3; mf += 2) { Q.set(cx + mf, by + 4, rgb('#0e0e12')); Q.set(cx + mf + 1, by + 6, rgb('#0e0e12')); }
+    }
     if (tem('oculosEscuros')) { Q.rect(oE - 5, olhoY - 3, 11, 6, rgb('#141018')); Q.rect(oD - 5, olhoY - 3, 11, 6, rgb('#141018')); Q.rect(cx - 2, olhoY - 2, 4, 1, rgb('#141018')); Q.rect(oE - 3, olhoY - 2, 3, 1, rgb('#5a6a8a')); Q.rect(oD - 3, olhoY - 2, 3, 1, rgb('#5a6a8a')); }
 
     // ----- cabelo e chapéu -----

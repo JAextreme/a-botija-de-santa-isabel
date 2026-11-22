@@ -239,6 +239,11 @@
       if (ex.indexOf('oculos') >= 0) { var fo = '#2a2a33'; if (lado) { P.r(ox - 1, oy - 1, 4, 4, fo); P.r(ox, oy, 2, 2, '#bcd8e8'); P.r(ox + 3, oy, 3, 1, fo); } else { P.r(ox - 1, oy - 1, 4, 4, fo); P.r(ox2 - 1, oy - 1, 4, 4, fo); P.r(ox, oy, 2, 2, '#bcd8e8'); P.r(ox2, oy, 2, 2, '#bcd8e8'); P.p(ox, oy + 1, olho); P.p(ox2 + 1, oy + 1, olho); P.r(ox + 3, oy, ox2 - ox - 3, 1, fo); } }
       if (ex.indexOf('oculosEscuros') >= 0) { var fe = '#141018'; if (lado) P.r(ox - 1, oy - 1, 5, 3, fe); else { P.r(ox - 1, oy - 1, ox2 - ox + 4, 3, fe); P.p(ox, oy - 1, '#5a6a8a'); P.p(ox2, oy - 1, '#5a6a8a'); } }
       if (ex.indexOf('bigode') >= 0) { P.r(lado ? hx - 1 : hx + 2, hy + 8, lado ? 3 : 6, 1, cab.b); if (!lado) { P.p(hx + 2, hy + 9, cab.b); P.p(hx + 7, hy + 9, cab.b); } }
+      if (ex.indexOf('bigodinho') >= 0) { var bgd = cla(d.cabelo || '#2b1d14', 0.25); if (lado) P.r(hx - 1, hy + 8, 2, 1, bgd); else P.r(hx + 3, hy + 8, 4, 1, bgd); } // buço ralo
+      if (ex.indexOf('mascara') >= 0) { // máscara respiradora: corpo cinza, cartuchos claros, filtro preto com faixa amarela
+        if (lado) { P.r(hx + 3, hy + 7, 4, 1, '#1a1a1e'); P.r(hx - 1, hy + 7, 4, 4, '#7a7e86'); P.r(hx - 1, hy + 7, 4, 1, '#9aa0a8'); P.r(hx - 2, hy + 8, 2, 3, '#24242a'); P.p(hx - 2, hy + 8, '#e8c030'); }
+        else { P.r(hx, hy + 7, 1, 1, '#1a1a1e'); P.r(hx + hw - 1, hy + 7, 1, 1, '#1a1a1e'); P.r(hx + 2, hy + 7, 6, 4, '#7a7e86'); P.r(hx + 2, hy + 7, 6, 1, '#9aa0a8'); P.r(hx + 1, hy + 8, 2, 2, '#b8bec6'); P.r(hx + hw - 3, hy + 8, 2, 2, '#b8bec6'); P.r(hx + 4, hy + 9, 2, 2, '#24242a'); P.r(hx + 4, hy + 9, 2, 1, '#e8c030'); }
+      }
       if (ex.indexOf('barba') >= 0) { if (lado) { P.r(hx, hy + 8, 5, 4, cab.b); P.r(hx, hy + 9, 2, 1, '#7a2a2a'); } else { P.r(hx + 1, hy + 8, hw - 2, 4, cab.b); P.r(hx + 1, hy + 8, 1, 3, cab.c); P.r(hx + 3, hy + 9, 4, 1, '#5a1e1e'); P.r(hx, hy + 6, 1, 4, cab.b); P.r(hx + hw - 1, hy + 6, 1, 4, cab.e); } }
     }
 
